@@ -1,4 +1,5 @@
 ﻿Sistema de control para un EspectoFotoColorímetro (EFC)
+=======================================================
 Modelo DIANO - Match Scan
 =======================================================
 
