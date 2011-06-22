@@ -43,6 +43,9 @@ RESET:
 		ldi	tmp, high(RAMEND)
 		out	SPH, tmp
 
+		rjmp MAIN
+
+
 ;*****************************************************************
 ;*	Configuración de la comunicación SPI en SLAVE
 ;*****************************************************************
@@ -53,11 +56,15 @@ SPI_SlaveInit:
 		;*	Habilita SPI, como SLAVE
 		ldi r17,0b11100000
 		out SPCR,r17
+		ret
 
 ;*****************************************************************
 ;*	MAIN Program for microcontroller
 ;*****************************************************************
 MAIN:
+		;*	Asi es como deberia funcionar
+		rcall SPI_SlaveInit
+		
 		;*	Habilito el LCD
 		rcall	LCD_init
 

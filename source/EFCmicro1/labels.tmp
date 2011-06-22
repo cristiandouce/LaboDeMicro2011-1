@@ -20,8 +20,8 @@
  </OUTPUT_FILES>
  <LABELS>
   <RESET><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro1\EFCmicro1.asm</FILE><LINE>29</LINE></RESET>
-  <SPI_Master_Init><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro1\EFCmicro1.asm</FILE><LINE>46</LINE></SPI_Master_Init>
   <MAIN><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro1\EFCmicro1.asm</FILE><LINE>61</LINE></MAIN>
+  <SPI_Master_Init><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro1\EFCmicro1.asm</FILE><LINE>46</LINE></SPI_Master_Init>
   <SPI_START><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro1\EFCmicro1.asm</FILE><LINE>108</LINE></SPI_START>
   <SPI_Master_Transmit><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro1\EFCmicro1.asm</FILE><LINE>120</LINE></SPI_Master_Transmit>
   <SPI_Wait_Transmit><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro1\EFCmicro1.asm</FILE><LINE>127</LINE></SPI_Wait_Transmit>

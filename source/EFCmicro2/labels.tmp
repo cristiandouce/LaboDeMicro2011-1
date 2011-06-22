@@ -20,18 +20,18 @@
  </OUTPUT_FILES>
  <LABELS>
   <RESET><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>40</LINE></RESET>
-  <SPI_STC><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>80</LINE></SPI_STC>
-  <SPI_SlaveInit><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>49</LINE></SPI_SlaveInit>
-  <MAIN><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>60</LINE></MAIN>
-  <LCD_init><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>97</LINE></LCD_init>
-  <LCD_wait><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>256</LINE></LCD_wait>
-  <END_PROGRAM><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>73</LINE></END_PROGRAM>
-  <LCD_putchar><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>162</LINE></LCD_putchar>
-  <LCD_delay><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>267</LINE></LCD_delay>
-  <LCD_command8><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>135</LINE></LCD_command8>
-  <LCD_command><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>198</LINE></LCD_command>
-  <LCD_getaddr><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>229</LINE></LCD_getaddr>
-  <LCD_delay_outer><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>269</LINE></LCD_delay_outer>
-  <LCD_delay_inner><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>271</LINE></LCD_delay_inner>
+  <SPI_STC><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>87</LINE></SPI_STC>
+  <MAIN><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>64</LINE></MAIN>
+  <SPI_SlaveInit><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>52</LINE></SPI_SlaveInit>
+  <LCD_init><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>104</LINE></LCD_init>
+  <LCD_wait><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>263</LINE></LCD_wait>
+  <END_PROGRAM><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>80</LINE></END_PROGRAM>
+  <LCD_putchar><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>169</LINE></LCD_putchar>
+  <LCD_delay><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>274</LINE></LCD_delay>
+  <LCD_command8><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>142</LINE></LCD_command8>
+  <LCD_command><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>205</LINE></LCD_command>
+  <LCD_getaddr><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>236</LINE></LCD_getaddr>
+  <LCD_delay_outer><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>276</LINE></LCD_delay_outer>
+  <LCD_delay_inner><FILE>C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>278</LINE></LCD_delay_inner>
  </LABELS>
 </ASSEMBLER_INFO>

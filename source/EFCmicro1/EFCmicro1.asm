@@ -38,7 +38,7 @@ RESET:
 		;*	se la llama por rcall, entonces se corre el valor 
 		;*	del primer byte un bit hacia MSB
 
-		;rjmp MAIN
+		rjmp MAIN
 
 ;*****************************************************************
 ;*	Configuración de la comunicación SPI en MASTER
@@ -53,14 +53,14 @@ SPI_Master_Init:
 		;*	de clock de f/16
 		ldi temp, 0b01110001
 		out SPCR, temp
-		;ret
+		ret
 
 ;*****************************************************************
 ;*	MAIN Program for microcontroller
 ;*****************************************************************
 MAIN:
 		;*	Asi es como deberia iniciarse, con un rcall
-		;rcall SPI_Master_Init
+		rcall SPI_Master_Init
 
 		rcall SPI_START
 		ldi transmit, 'h'
