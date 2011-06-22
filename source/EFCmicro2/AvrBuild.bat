@@ -1,0 +1,2 @@
+@ECHO OFF
+"C:\Archivos de programa\Atmel\AVR Tools\AvrAssembler2\avrasm2.exe" -S "C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\labels.tmp" -fI -W+ie -o "C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.hex" -d "C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.obj" -e "C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.eep" -m "C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.map" "C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm"
