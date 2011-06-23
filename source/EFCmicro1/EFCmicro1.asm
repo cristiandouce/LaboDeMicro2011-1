@@ -17,21 +17,31 @@
 	.include "m88def.inc"
 	.org 0
 
-	.def	temp		=	r16
-	.def	transmit	=	r17
-	.def	receive		=	r18
+	.def	tmp		=	r16
+	.def	arg		=	r17		;*	argument for calling subroutines
+	.def	rtn		=	r18		;*	return value from subroutines
+	.def    dta		=	r19		;*	el q le da el master
+	.def	tmt		=	r20
+	.def	rcv		=	r21
+
 
 	rjmp RESET
+
+;*****************************************************************
+;*	Defino los vectores de interrupcion
+;*****************************************************************
+	.org 0x011
+		rjmp SPI_STC ; SPI Transfer Complete Handler
 
 ;*****************************************************************
 ;*	Inicialización del Micro luego del RESET
 ;*****************************************************************
 RESET:
 		;*	Inicialización del StackPointer
-		ldi	temp, low(RAMEND)
-		out	SPL, temp
-		ldi	temp, high(RAMEND)
-		out	SPH, temp
+		ldi	tmp, low(RAMEND)
+		out	SPL, tmp
+		ldi	tmp, high(RAMEND)
+		out	SPH, tmp
 
 
 		;*	Si en lugar de hacer continua la configuracion SPI
@@ -46,13 +56,13 @@ RESET:
 SPI_Master_Init:
 		;*	Set de SCK, MOSI y ~SS como salidas y MISO como
 		;*	entrada
-		ldi temp, 0b00101100
-		out DDRB, temp
+		ldi tmp, 0b00101100
+		out DDRB, tmp
 
 		;*	Habilita comunicación SPI como MASTER a frecuencia
 		;*	de clock de f/16
-		ldi temp, 0b01110001
-		out SPCR, temp
+		ldi tmp, 0b01110001
+		out SPCR, tmp
 		ret
 
 ;*****************************************************************
@@ -63,37 +73,37 @@ MAIN:
 		rcall SPI_Master_Init
 
 		rcall SPI_START
-		ldi transmit, 'h'
+		ldi tmt, 'h'
+		rcall SPI_Master_Transmit
+		rcall SPI_Wait_Transmit
+		sei
+		sleep
+		rcall SPI_STOP
+		
+		rcall SPI_START
+		ldi tmt, 'o'
 		rcall SPI_Master_Transmit
 		rcall SPI_Wait_Transmit
 		rcall SPI_STOP
-
-		rcall LCD_Delay
-		rcall LCD_Delay
+		sei
+		sleep
 
 		rcall SPI_START
-		ldi transmit, 'o'
+		ldi tmt, 'l'
 		rcall SPI_Master_Transmit
 		rcall SPI_Wait_Transmit
 		rcall SPI_STOP
+		sei
+		sleep
 
-		rcall LCD_Delay
-		rcall LCD_Delay
 
 		rcall SPI_START
-		ldi transmit, 'l'
+		ldi tmt, 'a'
 		rcall SPI_Master_Transmit
 		rcall SPI_Wait_Transmit
 		rcall SPI_STOP
-
-		rcall LCD_Delay
-		rcall LCD_Delay
-
-		rcall SPI_START
-		ldi transmit, 'a'
-		rcall SPI_Master_Transmit
-		rcall SPI_Wait_Transmit
-		rcall SPI_STOP
+		sei
+		sleep
 
 		rjmp END_PROGRAM
 
@@ -115,10 +125,10 @@ SPI_STOP:
 		sbi PORTB, 2
 		ret
 ;*****************************************************************
-;*	Transmisión de 'transmit' por SPI al SLAVE
+;*	Transmisión de 'tmt' por SPI al SLAVE
 ;*****************************************************************
 SPI_Master_Transmit:
-		out	SPDR, transmit
+		out	SPDR, tmt
 		ret
 
 ;*****************************************************************
@@ -126,8 +136,8 @@ SPI_Master_Transmit:
 ;*****************************************************************
 SPI_Wait_Transmit:
 		;*	Espera del fin de la recepción
-		in temp, SPSR
-		sbrs temp, SPIF
+		in tmp, SPSR
+		sbrs tmp, SPIF
 		rjmp SPI_Wait_Transmit
 		ret
 
@@ -145,3 +155,18 @@ LCD_delay_inner:
 		dec	r2;cuando ya hizo 255us decremento r2
 		brne LCD_delay_outer;sale dl ciclo si r2 es igual a cero
 		ret
+
+
+
+;------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+;*****************************************************************
+;*	Operaciones de las Interrupciones
+;*****************************************************************
+SPI_STC:
+		in dta,SPDR
+		reti

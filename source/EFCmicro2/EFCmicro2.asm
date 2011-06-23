@@ -21,10 +21,14 @@
 	.equ	LCD_RW	= 2
 	.equ	LCD_E	= 3
 	
-	.def	tmp		= r16
-	.def	arg		= r17		;*	argument for calling subroutines
-	.def	rtn		= r18		;*	return value from subroutines
-	.def    dta		= r19		;*	el q le da el master
+	.def	tmp		=	r16
+	.def	arg		=	r17		;*	argument for calling subroutines
+	.def	rtn		=	r18		;*	return value from subroutines
+	.def    dta		=	r19		;*	el q le da el master
+	.def	tmt		=	r20
+	.def	rcv		=	r21
+
+
 
 		rjmp RESET
 	
@@ -92,12 +96,46 @@ SPI_STC:
 		rcall	LCD_putchar
 		rcall	LCD_wait
 		
+		;*	Busco iniciar comunicacion con MASTER
+		;rcall	SPI_START
+		ldi	tmt, 0x01
+		rcall 	SPI_Slave_Transmit
+		rcall	SPI_Wait_Transmit
+		;rcall	SPI_STOP
 		;*	Habilito nuevamente las interrupciones
 		sei
 		
 		;*	Retorno a la interrupcion
 		reti
 
+;*****************************************************************
+;*	Rutinas START/STOP del SPI
+;*****************************************************************
+SPI_START:
+		;*	Elijo el SLAVE con ~SS (PortB,2) en LOW
+		cbi PORTB, 2
+		ret
+
+SPI_STOP:
+		;*	Elijo el SLAVE con ~SS (PortB,2) en HIGH
+		sbi PORTB, 2
+		ret
+;*****************************************************************
+;*	Transmisión de 'tmt' por SPI al SLAVE
+;*****************************************************************
+SPI_Slave_Transmit:
+		out	SPDR, tmt
+		ret
+
+;*****************************************************************
+;*	Espera del fin de la recepción SPI
+;*****************************************************************
+SPI_Wait_Transmit:
+		;*	Espera del fin de la recepción
+		in tmp, SPSR
+		sbrs tmp, SPIF
+		rjmp SPI_Wait_Transmit
+		ret
 ;*****************************************************************
 ;*	Rutinas para trabajar con el LCD
 ;*****************************************************************
