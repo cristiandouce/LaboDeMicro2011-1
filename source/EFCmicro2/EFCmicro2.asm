@@ -20,6 +20,12 @@
 	.equ	LCD_RS	= 1
 	.equ	LCD_RW	= 2
 	.equ	LCD_E	= 3
+
+	.equ	pCSS	=	1
+	.equ	pSS		=	2
+	.equ	pMOSI	=	3
+	.equ	pMISO	=	4
+	.equ	pSCK	=	5
 	
 	.def	tmp		=	r16
 	.def	arg		=	r17		;*	argument for calling subroutines
@@ -32,11 +38,15 @@
 
 		rjmp RESET
 	
+
+
 ;*****************************************************************
 ;*	Defino los vectores de interrupcion
 ;*****************************************************************
 	.org 0x011
 		rjmp SPI_STC ; SPI Transfer Complete Handler
+
+
 
 ;*****************************************************************
 ;*	Inicialización del Micro luego del RESET
@@ -46,21 +56,8 @@ RESET:
 		out	SPL, tmp
 		ldi	tmp, high(RAMEND)
 		out	SPH, tmp
-
 		rjmp MAIN
 
-
-;*****************************************************************
-;*	Configuración de la comunicación SPI en SLAVE
-;*****************************************************************
-SPI_SlaveInit:
-		;*	Set MISO output, all others input
-		ldi r17,0x10
-		out DDRB,r17
-		;*	Habilita SPI, como SLAVE
-		ldi r17,0b11100000
-		out SPCR,r17
-		ret
 
 ;*****************************************************************
 ;*	MAIN Program for microcontroller
@@ -76,13 +73,50 @@ MAIN:
 	    rcall	LCD_wait
 
 		;*	Habilito las interrupciones
-     	sei
 
 		rjmp END_PROGRAM
 
 
 END_PROGRAM:
+		sei
 		rjmp END_PROGRAM
+
+
+
+;*****************************************************************
+;*	Configuración de la comunicación SPI en MASTER
+;*****************************************************************
+SPI_Master_Init:
+		;*	Set de SCK, MOSI y ~SS como salidas y MISO como
+		;*	entrada
+
+		cbi DDRB,pMISO
+		sbi	DDRB,pMOSI
+		sbi	DDRB,pSCK
+		sbi	DDRB,pSS
+		sbi	DDRB,pCSS
+		;*	Habilita comunicación SPI como MASTER a frecuencia
+		;*	de clock de f/16
+		ldi tmp, 0b01110001
+		out SPCR, tmp
+		ret
+
+
+
+;*****************************************************************
+;*	Configuración de la comunicación SPI en SLAVE
+;*****************************************************************
+SPI_SlaveInit:
+		;*	Set MISO output, all others input
+		sbi DDRB,pMISO
+		cbi	DDRB,pMOSI
+		cbi	DDRB,pSCK
+		cbi	DDRB,pSS
+		sbi	DDRB,pCSS
+		;*	Habilita SPI, como SLAVE
+		ldi r17,0b11100000
+		out SPCR,r17
+		ret
 
 
 ;*****************************************************************
@@ -97,35 +131,42 @@ SPI_STC:
 		rcall	LCD_wait
 		
 		;*	Busco iniciar comunicacion con MASTER
-		;rcall	SPI_START
+		rcall	SPI_Master_Init
+		rcall	SPI_START
 		ldi	tmt, 0x01
-		rcall 	SPI_Slave_Transmit
+		rcall 	SPI_Master_Transmit
 		rcall	SPI_Wait_Transmit
-		;rcall	SPI_STOP
+		rcall	SPI_STOP
+		rcall	SPI_SlaveInit
 		;*	Habilito nuevamente las interrupciones
-		sei
-		
-		;*	Retorno a la interrupcion
 		reti
+
+
+
 
 ;*****************************************************************
 ;*	Rutinas START/STOP del SPI
 ;*****************************************************************
 SPI_START:
 		;*	Elijo el SLAVE con ~SS (PortB,2) en LOW
-		cbi PORTB, 2
+		cbi PORTB, pCSS
 		ret
 
 SPI_STOP:
 		;*	Elijo el SLAVE con ~SS (PortB,2) en HIGH
-		sbi PORTB, 2
+		sbi PORTB, pCSS
 		ret
+
+
+
 ;*****************************************************************
 ;*	Transmisión de 'tmt' por SPI al SLAVE
 ;*****************************************************************
-SPI_Slave_Transmit:
+SPI_Master_Transmit:
 		out	SPDR, tmt
 		ret
+
+
 
 ;*****************************************************************
 ;*	Espera del fin de la recepción SPI
@@ -136,6 +177,33 @@ SPI_Wait_Transmit:
 		sbrs tmp, SPIF
 		rjmp SPI_Wait_Transmit
 		ret
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ;*****************************************************************
 ;*	Rutinas para trabajar con el LCD
 ;*****************************************************************

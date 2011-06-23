@@ -3,11 +3,11 @@
  <DEVICE>ATmega88</DEVICE>
  <WORKING_DIR>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2</WORKING_DIR>
  <INCLUDE_PATH>
-  <DIR>C:\Program Files\Atmel\AVR Tools\AvrAssembler2\Appnotes</DIR>
+  <DIR>C:\Program Files (x86)\Atmel\AVR Tools\AvrAssembler2\Appnotes</DIR>
  </INCLUDE_PATH>
  <SOURCE_FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</SOURCE_FILE>
  <INCLUDED_FILES>
-  <FILE>C:\Program Files\Atmel\AVR Tools\AvrAssembler2\Appnotes\m88def.inc</FILE>
+  <FILE>C:\Program Files (x86)\Atmel\AVR Tools\AvrAssembler2\Appnotes\m88def.inc</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
   <FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.obj</FILE>
@@ -19,23 +19,24 @@
   <FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.map</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <RESET><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>44</LINE></RESET>
-  <SPI_STC><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>91</LINE></SPI_STC>
-  <MAIN><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>68</LINE></MAIN>
-  <SPI_SlaveInit><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>56</LINE></SPI_SlaveInit>
-  <LCD_init><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>142</LINE></LCD_init>
-  <LCD_wait><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>301</LINE></LCD_wait>
-  <END_PROGRAM><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>84</LINE></END_PROGRAM>
-  <LCD_putchar><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>207</LINE></LCD_putchar>
-  <SPI_Slave_Transmit><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>126</LINE></SPI_Slave_Transmit>
-  <SPI_Wait_Transmit><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>133</LINE></SPI_Wait_Transmit>
-  <SPI_START><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>114</LINE></SPI_START>
-  <SPI_STOP><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>119</LINE></SPI_STOP>
-  <LCD_delay><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>312</LINE></LCD_delay>
-  <LCD_command8><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>180</LINE></LCD_command8>
-  <LCD_command><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>243</LINE></LCD_command>
-  <LCD_getaddr><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>274</LINE></LCD_getaddr>
-  <LCD_delay_outer><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>314</LINE></LCD_delay_outer>
-  <LCD_delay_inner><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>316</LINE></LCD_delay_inner>
+  <RESET><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>54</LINE></RESET>
+  <SPI_STC><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>125</LINE></SPI_STC>
+  <MAIN><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>65</LINE></MAIN>
+  <SPI_SlaveInit><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>109</LINE></SPI_SlaveInit>
+  <LCD_init><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>210</LINE></LCD_init>
+  <LCD_wait><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>369</LINE></LCD_wait>
+  <END_PROGRAM><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>80</LINE></END_PROGRAM>
+  <SPI_Master_Init><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>89</LINE></SPI_Master_Init>
+  <LCD_putchar><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>275</LINE></LCD_putchar>
+  <SPI_START><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>150</LINE></SPI_START>
+  <SPI_Master_Transmit><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>165</LINE></SPI_Master_Transmit>
+  <SPI_Wait_Transmit><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>174</LINE></SPI_Wait_Transmit>
+  <SPI_STOP><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>155</LINE></SPI_STOP>
+  <LCD_delay><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>380</LINE></LCD_delay>
+  <LCD_command8><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>248</LINE></LCD_command8>
+  <LCD_command><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>311</LINE></LCD_command>
+  <LCD_getaddr><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>342</LINE></LCD_getaddr>
+  <LCD_delay_outer><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>382</LINE></LCD_delay_outer>
+  <LCD_delay_inner><FILE>C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm</FILE><LINE>384</LINE></LCD_delay_inner>
  </LABELS>
 </ASSEMBLER_INFO>

@@ -17,6 +17,16 @@
 	.include "m88def.inc"
 	.org 0
 
+	.equ	pCSS	=	1
+	.equ	pSS		=	2
+	.equ	pMOSI	=	3
+	.equ	pMISO	=	4
+	.equ	pSCK	=	5
+
+
+
+	
+
 	.def	tmp		=	r16
 	.def	arg		=	r17		;*	argument for calling subroutines
 	.def	rtn		=	r18		;*	return value from subroutines
@@ -50,61 +60,51 @@ RESET:
 
 		rjmp MAIN
 
-;*****************************************************************
-;*	Configuración de la comunicación SPI en MASTER
-;*****************************************************************
-SPI_Master_Init:
-		;*	Set de SCK, MOSI y ~SS como salidas y MISO como
-		;*	entrada
-		ldi tmp, 0b00101100
-		out DDRB, tmp
 
-		;*	Habilita comunicación SPI como MASTER a frecuencia
-		;*	de clock de f/16
-		ldi tmp, 0b01110001
-		out SPCR, tmp
-		ret
 
 ;*****************************************************************
 ;*	MAIN Program for microcontroller
 ;*****************************************************************
 MAIN:
-		;*	Asi es como deberia iniciarse, con un rcall
+		;*	Inicio Micro1 como master
 		rcall SPI_Master_Init
 
 		rcall SPI_START
 		ldi tmt, 'h'
 		rcall SPI_Master_Transmit
 		rcall SPI_Wait_Transmit
+		rcall SPI_STOP
+		rcall SPI_SlaveInit
 		sei
 		sleep
-		rcall SPI_STOP
-		
+		rcall SPI_Master_Init
 		rcall SPI_START
 		ldi tmt, 'o'
 		rcall SPI_Master_Transmit
 		rcall SPI_Wait_Transmit
 		rcall SPI_STOP
+		rcall SPI_SlaveInit
 		sei
 		sleep
-
+		rcall SPI_Master_Init
 		rcall SPI_START
 		ldi tmt, 'l'
 		rcall SPI_Master_Transmit
 		rcall SPI_Wait_Transmit
 		rcall SPI_STOP
+		rcall SPI_SlaveInit
 		sei
 		sleep
-
-
+		rcall SPI_Master_Init
 		rcall SPI_START
 		ldi tmt, 'a'
 		rcall SPI_Master_Transmit
 		rcall SPI_Wait_Transmit
 		rcall SPI_STOP
+		rcall SPI_SlaveInit
 		sei
 		sleep
-
+		rcall SPI_Master_Init
 		rjmp END_PROGRAM
 
 
@@ -113,17 +113,51 @@ END_PROGRAM:
 
 
 ;*****************************************************************
+;*	Configuración de la comunicación SPI en MASTER
+;*****************************************************************
+SPI_Master_Init:
+		;*	Set de SCK, MOSI y ~SS como salidas y MISO como
+		;*	entrada
+
+		cbi DDRB,pMISO
+		sbi	DDRB,pMOSI
+		sbi	DDRB,pSCK
+		sbi	DDRB,pSS
+		sbi	DDRB,pCSS
+		;*	Habilita comunicación SPI como MASTER a frecuencia
+		;*	de clock de f/16
+		ldi tmp, 0b01110001
+		out SPCR, tmp
+		ret
+
+;*****************************************************************
+;*	Configuración de la comunicación SPI en SLAVE
+;*****************************************************************
+SPI_SlaveInit:
+		;*	Set MISO output, all others input
+		sbi DDRB,pMISO
+		cbi	DDRB,pMOSI
+		cbi	DDRB,pSCK
+		cbi	DDRB,pSS
+		sbi	DDRB,pCSS
+		;*	Habilita SPI, como SLAVE
+		ldi r17,0b11100000
+		out SPCR,r17
+		ret
+
+;*****************************************************************
 ;*	Rutinas START/STOP del SPI
 ;*****************************************************************
 SPI_START:
 		;*	Elijo el SLAVE con ~SS (PortB,2) en LOW
-		cbi PORTB, 2
+		cbi PORTB, pCSS
 		ret
 
 SPI_STOP:
 		;*	Elijo el SLAVE con ~SS (PortB,2) en HIGH
-		sbi PORTB, 2
+		sbi PORTB, pCSS
 		ret
+
 ;*****************************************************************
 ;*	Transmisión de 'tmt' por SPI al SLAVE
 ;*****************************************************************
