@@ -41,10 +41,10 @@
 
 ;defino macros
 	.MACRO	SPI_START;*	Elijo el SLAVE con ~SS (PortB,2) en LOW
-		cbi PORTB, pCSS
+		cbi PORTB, pSS
 	.ENDMACRO
 	.MACRO	SPI_STOP;*	Elijo el SLAVE con ~SS (PortB,2) en LOW
-		sbi PORTB, pCSS
+		sbi PORTB, pSS
 	.ENDMACRO
 
 	.org 0x0300 ;defino una palabra para mandar
