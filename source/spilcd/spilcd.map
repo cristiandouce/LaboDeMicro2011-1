@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.17  C:\Proyectos\spilcd.asm Fri Jun 24 01:59:38 2011
+AVRASM ver. 2.1.17  C:\Proyectos\spilcd.asm Fri Jun 24 03:37:00 2011
 
 
 EQU  SIGNATURE_000 0000001e
@@ -705,8 +705,8 @@ DSEG var          00000100
 CSEG RESET        00000012
 CSEG SPI_STC      00000038
 CSEG MAIN         00000017
-CSEG LCD_init     00000048
-CSEG LCD_wait     000000be
+CSEG LCD_init     00000049
+CSEG LCD_wait     000000bf
 CSEG SPI_Minit    0000001f
 CSEG SPI_Sendstring 00000028
 CSEG LCD_Putstring 0000003e
@@ -715,10 +715,10 @@ CSEG ssloop       00000029
 CSEG SPI_Wait     0000003a
 CSEG SPI_Mtransmit 00000038
 CSEG psloop       0000003f
-CSEG LCD_Putchar  0000006b
-CSEG LCD_delay    000000c2
-CSEG LCD_command8 0000005a
-CSEG LCD_command  0000008b
-CSEG LCD_getaddr  000000a8
-CSEG LCD_delay_outer 000000c3
-CSEG LCD_delay_inner 000000c4
+CSEG LCD_Putchar  0000006c
+CSEG LCD_delay    000000c3
+CSEG LCD_command8 0000005b
+CSEG LCD_command  0000008c
+CSEG LCD_getaddr  000000a9
+CSEG LCD_delay_outer 000000c4
+CSEG LCD_delay_inner 000000c5

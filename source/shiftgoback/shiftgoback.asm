@@ -67,7 +67,7 @@ RESET:
 ;*	MAIN Program for microcontroller
 ;*****************************************************************
 MAIN:	rcall	SPI_Sinit
-		rcall   idle	
+		rjmp   idle	
 		
 
 

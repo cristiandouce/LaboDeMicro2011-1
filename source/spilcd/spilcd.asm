@@ -49,7 +49,7 @@
 
 	.org 0x0300 ;defino una palabra para mandar
 		.cseg
-		string: .db "abcdef"
+		string: .db "abcdefg"
 
 	.dseg
 		var:	.byte	6
@@ -94,7 +94,7 @@ MAIN:
 		rcall	SPI_Sendstring
 		SPI_STOP
 		rcall	LCD_Putstring
-loop:	rcall	loop
+loop:	rjmp	loop
 
 
 
@@ -119,11 +119,11 @@ SPI_Minit:
 SPI_Sendstring:
 		ldi	con,0x00
 ssloop:	
-		ldi r26,low(string)
-		ldi	r27,high(string)
-		add r26,con
-		ld	tmp,X
-		out	spdr,tmp
+		ldi r30,0x00
+		ldi	r31,0x06
+		add r30,con
+		lpm	rtn,Z
+		out	spdr,rtn
 		in	dta,spdr
 		rcall SPI_Wait
 		ldi	r28,low(var)
@@ -131,7 +131,7 @@ ssloop:
 		add	r28,con
 		st	Y,dta
 		inc con
-		cpi	tmp,'f'
+		cpi	rtn,'g'
 		brne ssloop
 		ret
 
@@ -195,11 +195,12 @@ psloop:
 		ldi r26,low(var)
 		ldi	r27,high(var)
 		add r26,con
-		ld	tmp,X
+		ld	arg,X
+		mov tmt,arg
 		rcall LCD_Putchar
 		inc con
-		cpi	tmp,'f'
-		brne ssloop
+		cpi	tmt,'f'
+		brne psloop
 		ret
 
 		
