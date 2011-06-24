@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.17  C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro1\EFCmicro1.asm Thu Jun 23 01:08:16 2011
+AVRASM ver. 2.1.17  C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro1\EFCmicro1.asm Thu Jun 23 19:45:13 2011
 
 
 EQU  SIGNATURE_000 0000001e
@@ -693,16 +693,19 @@ DEF  rtn          r18
 DEF  dta          r19
 DEF  tmt          r20
 DEF  rcv          r21
+DEF  usd          r22
 CSEG RESET        00000012
-CSEG SPI_STC      0000005f
+CSEG SPI_STC      00000065
 CSEG MAIN         00000017
-CSEG SPI_Master_Init 0000003e
-CSEG SPI_START    0000004e
-CSEG SPI_Master_Transmit 00000052
-CSEG SPI_Wait_Transmit 00000054
-CSEG SPI_STOP     00000050
-CSEG SPI_SlaveInit 00000046
-CSEG END_PROGRAM  0000003d
-CSEG LCD_delay    00000058
-CSEG LCD_delay_outer 00000059
-CSEG LCD_delay_inner 0000005a
+CSEG SPI_Master_Init 0000003f
+CSEG LCD_delay    0000005e
+CSEG SPI_START    00000054
+CSEG SPI_Master_Transmit 00000058
+CSEG SPI_Wait_Transmit 0000005a
+CSEG SPI_STOP     00000056
+CSEG SPI_SlaveInit 0000004c
+CSEG wait_interrupt 00000047
+CSEG END_PROGRAM  0000003e
+CSEG isit         00000047
+CSEG LCD_delay_outer 0000005f
+CSEG LCD_delay_inner 00000060

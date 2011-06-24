@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.17  C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro2\EFCmicro2.asm Thu Jun 23 11:08:42 2011
+AVRASM ver. 2.1.17  C:\Proyectos\shiftgoback\shiftgoback.asm Fri Jun 24 01:44:39 2011
 
 
 EQU  SIGNATURE_000 0000001e
@@ -682,36 +682,24 @@ EQU  ACIaddr      00000017
 EQU  TWIaddr      00000018
 EQU  SPMRaddr     00000019
 EQU  INT_VECTORS_SIZE 0000001a
-EQU  LCD_RS       00000001
-EQU  LCD_RW       00000002
-EQU  LCD_E        00000003
 EQU  pCSS         00000001
 EQU  pSS          00000002
 EQU  pMOSI        00000003
 EQU  pMISO        00000004
 EQU  pSCK         00000005
+EQU  Cslave       000000e0
 DEF  tmp          r16
 DEF  arg          r17
 DEF  rtn          r18
 DEF  dta          r19
 DEF  tmt          r20
 DEF  rcv          r21
+DEF  usd          r22
 CSEG RESET        00000012
-CSEG SPI_STC      0000002d
+CSEG SPI_STC      00000029
 CSEG MAIN         00000017
-CSEG SPI_SlaveInit 00000025
-CSEG LCD_init     00000042
-CSEG LCD_wait     000000b8
-CSEG END_PROGRAM  0000001b
-CSEG SPI_Master_Init 0000001d
-CSEG LCD_putchar  00000065
-CSEG SPI_START    00000038
-CSEG SPI_Master_Transmit 0000003c
-CSEG SPI_Wait_Transmit 0000003e
-CSEG SPI_STOP     0000003a
-CSEG LCD_delay    000000bc
-CSEG LCD_command8 00000054
-CSEG LCD_command  00000085
-CSEG LCD_getaddr  000000a2
-CSEG LCD_delay_outer 000000bd
-CSEG LCD_delay_inner 000000be
+CSEG SPI_Sinit    0000001b
+CSEG idle         00000019
+CSEG LCD_delay    00000022
+CSEG LCD_delay_outer 00000023
+CSEG LCD_delay_inner 00000024
