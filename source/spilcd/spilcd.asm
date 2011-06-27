@@ -15,8 +15,8 @@
 ;*
 	.include "m88def.inc"
 
-	.org 0
 
+;defino constantes
 	.equ	LCD_RS	= 1
 	.equ	LCD_RW	= 2
 	.equ	LCD_E	= 3
@@ -26,19 +26,39 @@
 	.equ	pMOSI	=	3
 	.equ	pMISO	=	4
 	.equ	pSCK	=	5
-	
+	.equ	Cmaster =	0b01110001
+	.equ	Cslave =	0b11100000
+
+;defino simbolos
+	.def	con		=	r23
 	.def	tmp		=	r16
 	.def	arg		=	r17		;*	argument for calling subroutines
 	.def	rtn		=	r18		;*	return value from subroutines
 	.def    dta		=	r19		;*	el q le da el master
 	.def	tmt		=	r20
 	.def	rcv		=	r21
+	.def	usd		=	r22
 
+;defino macros
+	.MACRO	SPI_START;*	Elijo el SLAVE con ~SS (PortB,2) en LOW
+		cbi PORTB, pSS
+	.ENDMACRO
+	.MACRO	SPI_STOP;*	Elijo el SLAVE con ~SS (PortB,2) en LOW
+		sbi PORTB, pSS
+	.ENDMACRO
 
+	.org 0x0300 ;defino una palabra para mandar
+		.cseg
+		string: .db "abcdefg"
+
+	.dseg
+		var:	.byte	6
+
+	.cseg
+	.org 0
 
 		rjmp RESET
 	
-
 
 ;*****************************************************************
 ;*	Defino los vectores de interrupcion
@@ -63,107 +83,72 @@ RESET:
 ;*	MAIN Program for microcontroller
 ;*****************************************************************
 MAIN:
-		;*	Asi es como deberia funcionar
-		rcall SPI_SlaveInit
 		
 		;*	Habilito el LCD
 		rcall	LCD_init
-
 		;*	Espero la busy flag
 	    rcall	LCD_wait
-
-		;*	Habilito las interrupciones
-
-		rjmp END_PROGRAM
-
-
-END_PROGRAM:
-		sei
-		rjmp END_PROGRAM
+		;*Inicio el SPI como Master
+		rcall 	SPI_Minit
+		SPI_START
+		rcall	SPI_Sendstring
+		SPI_STOP
+		rcall	LCD_Putstring
+loop:	rjmp	loop
 
 
 
 ;*****************************************************************
 ;*	Configuración de la comunicación SPI en MASTER
 ;*****************************************************************
-SPI_Master_Init:
+SPI_Minit:
 		;*	Set de SCK, MOSI y ~SS como salidas y MISO como
 		;*	entrada
-
-		cbi DDRB,pMISO
 		sbi	DDRB,pMOSI
 		sbi	DDRB,pSCK
-		cbi	DDRB,pSS
-		sbi	DDRB,pCSS
+		sbi	DDRB,pSS
+		cbi	DDRB,pCSS
 		;*	Habilita comunicación SPI como MASTER a frecuencia
 		;*	de clock de f/16
-		ldi tmp, 0b01110001
+		ldi tmp, Cmaster
 		out SPCR, tmp
+		in tmp, SPSR
+		in tmp, SPDR
+		ret
+
+SPI_Sendstring:
+		ldi	con,0x00
+ssloop:	
+		ldi r30,0x00
+		ldi	r31,0x06
+		add r30,con
+		lpm	rtn,Z
+		out	spdr,rtn
+		in	dta,spdr
+		rcall SPI_Wait
+		ldi	r28,low(var)
+		ldi	r29,high(var)
+		add	r28,con
+		st	Y,dta
+		inc con
+		cpi	rtn,'g'
+		brne ssloop
 		ret
 
 
 
-;*****************************************************************
-;*	Configuración de la comunicación SPI en SLAVE
-;*****************************************************************
-SPI_SlaveInit:
-		;*	Set MISO output, all others input
-		sbi DDRB,pMISO
-		cbi	DDRB,pMOSI
-		cbi	DDRB,pSCK
-		cbi	DDRB,pSS
-		sbi	DDRB,pCSS
-		;*	Habilita SPI, como SLAVE
-		ldi r17,0b11100000
-		out SPCR,r17
-		ret
 
 
 ;*****************************************************************
 ;*	Operaciones de las Interrupciones
 ;*****************************************************************
 SPI_STC:
-		;*	Con transferencia completa leo el dato
-		in dta,SPDR;guardo el byte q me mando
-		rcall	SPI_Master_Init
-		;*	Escribo el dato en el LCD
-		rcall	LCD_putchar
-		rcall	LCD_wait
-		
-		;*	Busco iniciar comunicacion con MASTER
-
-		rcall	SPI_START
-		ldi	tmt, 0x01
-		rcall 	SPI_Master_Transmit
-		rcall	SPI_Wait_Transmit
-		rcall	SPI_STOP
-		rcall	SPI_SlaveInit
-		;*	Habilito nuevamente las interrupciones
-
-		reti
-
-
-
-
-;*****************************************************************
-;*	Rutinas START/STOP del SPI
-;*****************************************************************
-SPI_START:
-		;*	Elijo el SLAVE con ~SS (PortB,2) en LOW
-		cbi PORTB, pCSS
-		ret
-
-SPI_STOP:
-		;*	Elijo el SLAVE con ~SS (PortB,2) en HIGH
-		sbi PORTB, pCSS
-		ret
-
 
 
 ;*****************************************************************
 ;*	Transmisión de 'tmt' por SPI al SLAVE
 ;*****************************************************************
-SPI_Master_Transmit:
+SPI_Mtransmit:
 		out	SPDR, tmt
 		ret
 
@@ -172,17 +157,12 @@ SPI_Master_Transmit:
 ;*****************************************************************
 ;*	Espera del fin de la recepción SPI
 ;*****************************************************************
-SPI_Wait_Transmit:
+SPI_Wait:
 		;*	Espera del fin de la recepción
 		in tmp, SPSR
 		sbrs tmp, SPIF
-		rjmp SPI_Wait_Transmit
+		rjmp SPI_Wait
 		ret
-
-
-
-
-
 
 
 
@@ -208,6 +188,23 @@ SPI_Wait_Transmit:
 ;*****************************************************************
 ;*	Rutinas para trabajar con el LCD
 ;*****************************************************************
+
+LCD_Putstring:
+		ldi	con,0x00
+psloop:	
+		ldi r26,low(var)
+		ldi	r27,high(var)
+		add r26,con
+		ld	arg,X
+		mov tmt,arg
+		rcall LCD_Putchar
+		inc con
+		cpi	tmt,'f'
+		brne psloop
+		ret
+
+		
+
 LCD_init:
 		; cargo ese valor en el registro tmporal
 		ldi	tmp, 0b00001110
@@ -274,15 +271,15 @@ lcd_command8:
 		ret
 
 lcd_putchar:
-		push dta;save the argmuent (it's destroyed in between)
+		push arg;save the argmuent (it's destroyed in between)
 		in	tmp, DDRD	;get data direction bits
 		sbr	tmp, 0b11110000	;set the data lines to output
 		out	DDRD, tmp		;write value to DDRD
 		in	tmp, PortD		;then get the data from PortD
 		cbr	tmp, 0b11111110	;clear ALL LCD lines (data and control!)
-		cbr	dta, 0b00001111	;we have to write the high nibble of our argument first
+		cbr	arg, 0b00001111	;we have to write the high nibble of our argument first
 					;so mask off the low nibble
-		or	tmp, dta		;now set the argument bits in the Port value
+		or	tmp, arg		;now set the argument bits in the Port value
 		out	PortD, tmp		;and write the port value
 		sbi	PortD, LCD_RS		;now take RS high for LCD char data register access
 		sbi	PortD, LCD_E		;strobe Enable
@@ -290,12 +287,12 @@ lcd_putchar:
 		nop
 		nop
 		cbi	PortD, LCD_E
-		pop	dta	;restore the argument, we need the low nibble now...
+		pop	arg	;restore the argument, we need the low nibble now...
 		cbr	tmp, 0b11110000	;clear the data bits of our port value
-		swap	dta		;we want to write the LOW nibble of the argument to
+		swap	arg		;we want to write the LOW nibble of the argument to
 					;the LCD data lines, which are the HIGH port nibble!
-		cbr	dta, 0b00001111	;clear unused bits in argument
-		or	tmp, dta		;and set the required argument bits in the port value
+		cbr	arg, 0b00001111	;clear unused bits in argument
+		or	tmp, arg		;and set the required argument bits in the port value
 		out	PortD, tmp		;write data to port
 		sbi	PortD, LCD_RS		;again, set RS
 		sbi	PortD, LCD_E		;strobe Enable
@@ -388,3 +385,4 @@ LCD_delay_inner:
 		dec	r2;cuando ya hizo 255us decremento r2
 		brne LCD_delay_outer;sale dl ciclo si r2 es igual a cero
 		ret
+

@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.17  C:\dev\repos\LaboDeMicro2011-1\source\EFCmicro1\EFCmicro1.asm Wed Jun 22 17:24:47 2011
+AVRASM ver. 2.1.17  C:\dev\asm\LaboDeMicro2011-1\source\EFCmicro1\EFCmicro1.asm Thu Jun 23 19:45:13 2011
 
 
 EQU  SIGNATURE_000 0000001e
@@ -682,17 +682,30 @@ EQU  ACIaddr      00000017
 EQU  TWIaddr      00000018
 EQU  SPMRaddr     00000019
 EQU  INT_VECTORS_SIZE 0000001a
-DEF  temp         r16
-DEF  transmit     r17
-DEF  receive      r18
-CSEG RESET        00000001
-CSEG MAIN         0000000b
-CSEG SPI_Master_Init 00000006
-CSEG SPI_START    00000028
-CSEG SPI_Master_Transmit 0000002c
-CSEG SPI_Wait_Transmit 0000002e
-CSEG SPI_STOP     0000002a
-CSEG LCD_Delay    00000032
-CSEG END_PROGRAM  00000027
-CSEG LCD_delay_outer 00000033
-CSEG LCD_delay_inner 00000034
+EQU  pCSS         00000001
+EQU  pSS          00000002
+EQU  pMOSI        00000003
+EQU  pMISO        00000004
+EQU  pSCK         00000005
+DEF  tmp          r16
+DEF  arg          r17
+DEF  rtn          r18
+DEF  dta          r19
+DEF  tmt          r20
+DEF  rcv          r21
+DEF  usd          r22
+CSEG RESET        00000012
+CSEG SPI_STC      00000065
+CSEG MAIN         00000017
+CSEG SPI_Master_Init 0000003f
+CSEG LCD_delay    0000005e
+CSEG SPI_START    00000054
+CSEG SPI_Master_Transmit 00000058
+CSEG SPI_Wait_Transmit 0000005a
+CSEG SPI_STOP     00000056
+CSEG SPI_SlaveInit 0000004c
+CSEG wait_interrupt 00000047
+CSEG END_PROGRAM  0000003e
+CSEG isit         00000047
+CSEG LCD_delay_outer 0000005f
+CSEG LCD_delay_inner 00000060
