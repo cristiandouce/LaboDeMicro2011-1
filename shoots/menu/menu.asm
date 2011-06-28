@@ -5,12 +5,12 @@
 	;Menu
 	.equ	op1			=	0x00		;opcion1: lectura en menu principal; 'Si' en exportar y calibracion 2
 	.equ	op2			=	0x01		;opcion2: calibracion en menu principal: 'No' en exportar y calibracion 2	
-	.equ	op3			=	0x02		;opcion3: Lampara on en menu principal: 'Volver' en 
-	.equ	op4			=	0x03		;opcion4
+	.equ	op3			=	0x02		;opcion3: Lampara on en menu principal: 'Volver' en calibracion 2
+	.equ	op4			=	0x03		;opcion4	calibracion1
 	.equ	menu1		=	0b00000000	;Menu inicial
 	.equ	menu2		=	0b01000000	;Menu exportar
-	.equ	menu3		=	0b10000000	;Menu Calibracion 1
-	.equ	menu4		=	0b11000000	;Menu Calibracion 2
+	.equ	menu3		=	0b10000000	;Menu Calibracion 
+	.equ	menu4		=	0b11000000	;Menu Medición
 	.equ	maskOP		=	0b00000011	;para leer flags
 	.equ	flagUP		=	2
 	.equ	flagDW		=	3
@@ -85,6 +85,7 @@
 
 
 
+
 ;*Defino macros
 	.MACRO	SPI_START;*	Elijo el SLAVE con ~SS (PortB,2) en LOW
 		cbi PORTB, pSS
@@ -98,7 +99,12 @@
 		ldi		Xh,high(@0)
 	.ENDMACRO
 
-
+	.MACRO	ubicar;*	Cargo string en X
+		ldi		tmp,fla
+		cbr		tmp,@1
+		sbr		tmp,@0
+		ldi		fla,tmp
+	.ENDMACRO
 
 
 
@@ -124,9 +130,9 @@ mainloop:
 		cpi		tmp,menu2
 		breq	export_menu
 		cpi		tmp,menu3
-		breq	Lambda_menu
+		breq	calib_menu
 		cpi		tmp,menu4
-		breq	confirm_menu
+		breq	res_menu
 	
 
 
@@ -162,7 +168,7 @@ main_menu:
 		cpi		tmp,op3
 		breq	stepLmp
 		rjmp	error
-paso2:
+
 ;**************************************************************************
 ;*	Menu Exportar
 ;**************************************************************************
@@ -170,22 +176,58 @@ export_menu:
 		mov		tmp,fla
 		andi	tmp,maskOP
 		cpi		tmp,op1
-		breq	stepSi
+		breq	stepExpSi
 		cpi		tmp,op2
-		breq	stepNo
+		breq	stepExpNo
 		rjmp	error
-Lambda_menu:
+;**************************************************************************
+;*	Menu Calibrar
+;**************************************************************************
+calib_menu:
+		mov		tmp,fla
+		andi	tmp,maskOP
+		cpi		tmp,op1
+		breq	stepCal2Si
+		cpi		tmp,op2
+		breq	stepCal2No
+		cpi		tmp,op3
+		breq	stepCal2Back
+		cpi		tmp,op4
+		breq	stepCal1
+		rjmp	error
+;**************************************************************************
+;*	Menu Mostrar resultados
+;**************************************************************************
+res_menu:
 
 
-confirm_menu:
-
-
-
-;*	
+;**************************************************************************
+;*	Acciones en menues
+;**************************************************************************
+stepExpSi:
+		sbrc	fla,flagUP
+		rjmp	display_ExpNo
+		;si flagDW:paso de si a no
+		sbrc	fla,flagDW
+		rjmp	display_ExpNo
+		;si flagRT; exporto
+		sbrc	fla,flagRT
+		rjmp	FN_export
+		rjmp	error
+stepExpNo:
+		sbrc	fla,flagUP
+		rjmp	display_ExpSi
+		;si flagDW:display_Cal
+		sbrc	fla,flagDW
+		rjmp	display_ExpSi
+		;si flagRT; FN_Lec
+		sbrc	fla,flagRT
+		rjmp	check_keys
+		rjmp	error
 stepLec:
 		;si flagUP:nada
 		sbrc	fla,flagUP
-		rjmp	paso2
+		rjmp	check_keys
 		;si flagDW:display_Cal
 		sbrc	fla,flagDW
 		rjmp	display_Cal
@@ -209,13 +251,12 @@ stepCal:
 		rjmp	error
 		
 stepLmp:
-
 		;si flagUP:display_Cal
 		sbrc	fla,flagUP
 		rjmp	display_Cal
 		;si flagDW:nada
 		sbrc	fla,flagDW
-		rjmp	paso2
+		rjmp	check_keys
 		;si flagRT; FN_Lmp
 		sbrc	fla,flagRT
 		rjmp	FN_Lmp
@@ -225,7 +266,7 @@ stepLmp:
 
 ;*Seleccionada Lectura
 display_Lec:
-
+		ubicar	op1,maskOP
 		ldi		arg,lcdclear
 		rcall	LCD_command		
 		ldi		arg,lcdhome
@@ -241,10 +282,10 @@ display_Lec:
 		rcall	LCD_command
 		LoadstringX strCal
 		rcall	LCD_Putstring
-		rjmp	paso2
+		rjmp	check_keys
 
 display_Cal:
-
+		ubicar	op2,maskOP
 		ldi		arg,lcdclear
 		rcall	LCD_command		
 		ldi		arg,lcdhome
@@ -263,8 +304,9 @@ display_Cal:
 		sbrc	fla,flagLmp
 		LoadstringX strLmpOn
 		rcall	LCD_Putstring
-		rjmp	paso2
+		rjmp	check_keys
 display_Lmp:
+		ubicar	op3,maskOP
 		;vacio pantalla
 		ldi		arg,lcdclear
 		rcall	LCD_command		
@@ -284,22 +326,49 @@ display_Lmp:
 		sbrc	fla,flagLmp
 		LoadstringX strLmpOn
 		rcall	LCD_Putstring
-		rjmp	paso2
-;***********************************************************************
-;*	Menu exportar
-;***********************************************************************
-display_Lec:
+		rjmp	check_keys
+display_ExpNo:
+		ubicar	op2,maskOP
 		ldi		arg,lcdclear
 		rcall	LCD_command		
 		ldi		arg,lcdhome
 		rcall	LCD_command
 		;cargo primerlinea(seleccionada)
-		ldi		arg,'-'
-		rcall 	lcd_putchar
-		LoadstringX strLec
+		LoadstringX strExp
 		rcall	LCD_Putstring
-
-
+		;Cargo segunda linea
+		LoadstringX strSi
+		rcall	LCD_Putstring
+		ldi		arg,'/'
+		rcall 	lcd_putchar
+		ldi		arg,'*'
+		rcall 	lcd_putchar		
+		LoadstringX strNo
+		rcall	LCD_Putstring
+		ldi		arg,'*'
+		rcall 	lcd_putchar
+		rjmp	check_keys
+display_ExpSi:
+		ubicar	op1,maskOP
+		ldi		arg,lcdclear
+		rcall	LCD_command		
+		ldi		arg,lcdhome
+		rcall	LCD_command
+		;cargo primerlinea(seleccionada)
+		LoadstringX strExp
+		rcall	LCD_Putstring
+		;Cargo segunda linea
+		ldi		arg,'*'
+		rcall 	lcd_putchar
+		LoadstringX strSi
+		rcall	LCD_Putstring
+		ldi		arg,'*'
+		rcall 	lcd_putchar
+		ldi		arg,'/'
+		rcall 	lcd_putchar
+		LoadstringX strNo
+		rcall	LCD_Putstring
+		rjmp	check_keys
 ;******************************************************************
 ;*inicializo perifericos
 ;******************************************************************

@@ -1,67 +1,72 @@
 <ASSEMBLER_INFO>
  <VERSION>2.1.17</VERSION>
  <DEVICE>ATmega88</DEVICE>
- <WORKING_DIR>C:\dev\asm\LaboDeMicro2011-1\source\menu</WORKING_DIR>
+ <WORKING_DIR>C:\dev\asm\LaboDeMicro2011-1\shoots\menu</WORKING_DIR>
  <INCLUDE_PATH>
   <DIR>C:\Program Files (x86)\Atmel\AVR Tools\AvrAssembler2\Appnotes</DIR>
  </INCLUDE_PATH>
- <SOURCE_FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</SOURCE_FILE>
+ <SOURCE_FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</SOURCE_FILE>
  <INCLUDED_FILES>
   <FILE>C:\Program Files (x86)\Atmel\AVR Tools\AvrAssembler2\Appnotes\m88def.inc</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
-  <FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.obj</FILE>
+  <FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.obj</FILE>
  </OBJECT_FILES>
  <HEX_FILES>
-  <FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.hex</FILE>
+  <FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.hex</FILE>
  </HEX_FILES>
  <OUTPUT_FILES>
-  <FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.map</FILE>
+  <FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.map</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <strLec><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>52</LINE></strLec>
-  <strCal><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>53</LINE></strCal>
-  <strLmpOn><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>54</LINE></strLmpOn>
-  <strLmpOff><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>55</LINE></strLmpOff>
-  <strLmd><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>56</LINE></strLmd>
-  <strCL><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>57</LINE></strCL>
-  <strSi><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>58</LINE></strSi>
-  <strNo><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>59</LINE></strNo>
-  <strBck><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>60</LINE></strBck>
-  <strBsy><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>61</LINE></strBsy>
-  <string><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>65</LINE></string>
-  <RESET><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>109</LINE></RESET>
-  <startup><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>277</LINE></startup>
-  <mainloop><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>115</LINE></mainloop>
-  <main_menu><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>151</LINE></main_menu>
-  <export_menu><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>165</LINE></export_menu>
-  <Lambda_menu><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>173</LINE></Lambda_menu>
-  <confirm_menu><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>176</LINE></confirm_menu>
-  <check_keys><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>136</LINE></check_keys>
-  <stepLec><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>181</LINE></stepLec>
-  <stepCal><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>194</LINE></stepCal>
-  <stepLmp><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>207</LINE></stepLmp>
-  <error><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>586</LINE></error>
-  <paso2><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>161</LINE></paso2>
-  <display_Cal><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>236</LINE></display_Cal>
-  <display_Lec><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>222</LINE></display_Lec>
-  <display_Lmp><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>252</LINE></display_Lmp>
-  <lcd_putchar><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>469</LINE></lcd_putchar>
-  <LCD_Putstring><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>380</LINE></LCD_Putstring>
-  <LCD_command><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>505</LINE></LCD_command>
-  <LCD_init><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>404</LINE></LCD_init>
-  <LCD_wait><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>563</LINE></LCD_wait>
-  <SPI_Minit><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>302</LINE></SPI_Minit>
-  <USART_Init><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>353</LINE></USART_Init>
-  <SPI_Sendstring><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>319</LINE></SPI_Sendstring>
-  <ssloop><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>321</LINE></ssloop>
-  <SPI_Wait><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>341</LINE></SPI_Wait>
-  <USART_Transmit><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>368</LINE></USART_Transmit>
-  <psloop><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>382</LINE></psloop>
-  <LCD_delay><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>574</LINE></LCD_delay>
-  <LCD_command8><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>442</LINE></LCD_command8>
-  <LCD_getaddr><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>536</LINE></LCD_getaddr>
-  <LCD_delay_outer><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>576</LINE></LCD_delay_outer>
-  <LCD_delay_inner><FILE>C:\dev\asm\LaboDeMicro2011-1\source\menu\menu.asm</FILE><LINE>578</LINE></LCD_delay_inner>
+  <strLec><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>55</LINE></strLec>
+  <strCal><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>56</LINE></strCal>
+  <strLmpOn><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>57</LINE></strLmpOn>
+  <strLmpOff><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>58</LINE></strLmpOff>
+  <strLmd><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>59</LINE></strLmd>
+  <strCL><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>60</LINE></strCL>
+  <strSi><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>61</LINE></strSi>
+  <strNo><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>62</LINE></strNo>
+  <strBck><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>63</LINE></strBck>
+  <strBsy><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>64</LINE></strBsy>
+  <strExp><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>65</LINE></strExp>
+  <string><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>69</LINE></string>
+  <RESET><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>114</LINE></RESET>
+  <startup><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>358</LINE></startup>
+  <mainloop><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>120</LINE></mainloop>
+  <main_menu><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>156</LINE></main_menu>
+  <export_menu><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>170</LINE></export_menu>
+  <calib_menu><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>181</LINE></calib_menu>
+  <res_menu><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>186</LINE></res_menu>
+  <check_keys><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>141</LINE></check_keys>
+  <stepLec><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>212</LINE></stepLec>
+  <stepCal><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>225</LINE></stepCal>
+  <stepLmp><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>238</LINE></stepLmp>
+  <error><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>666</LINE></error>
+  <paso2><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>166</LINE></paso2>
+  <stepExpSi><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>192</LINE></stepExpSi>
+  <stepExpNo><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>202</LINE></stepExpNo>
+  <display_ExpNo><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>314</LINE></display_ExpNo>
+  <display_ExpSi><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>335</LINE></display_ExpSi>
+  <display_Cal><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>272</LINE></display_Cal>
+  <display_Lec><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>253</LINE></display_Lec>
+  <display_Lmp><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>293</LINE></display_Lmp>
+  <LCD_command><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>585</LINE></LCD_command>
+  <lcd_putchar><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>549</LINE></lcd_putchar>
+  <LCD_Putstring><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>461</LINE></LCD_Putstring>
+  <LCD_init><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>484</LINE></LCD_init>
+  <LCD_wait><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>643</LINE></LCD_wait>
+  <SPI_Minit><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>383</LINE></SPI_Minit>
+  <USART_Init><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>434</LINE></USART_Init>
+  <SPI_Sendstring><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>400</LINE></SPI_Sendstring>
+  <ssloop><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>402</LINE></ssloop>
+  <SPI_Wait><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>422</LINE></SPI_Wait>
+  <USART_Transmit><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>449</LINE></USART_Transmit>
+  <psloop><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>463</LINE></psloop>
+  <LCD_delay><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>654</LINE></LCD_delay>
+  <LCD_command8><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>522</LINE></LCD_command8>
+  <LCD_getaddr><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>616</LINE></LCD_getaddr>
+  <LCD_delay_outer><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>656</LINE></LCD_delay_outer>
+  <LCD_delay_inner><FILE>C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm</FILE><LINE>658</LINE></LCD_delay_inner>
  </LABELS>
 </ASSEMBLER_INFO>
