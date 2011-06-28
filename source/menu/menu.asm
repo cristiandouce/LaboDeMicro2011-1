@@ -3,26 +3,29 @@
 .;*Defino constantes
 ;-Operativos
 	;Menu
-	.equ	op1		=	0x00		;opcion1: lectura en menu principal; 'Si' en exportar y calibracion 2
-	.equ	op2		=	0x01		;opcion2: calibracion en menu principal: 'No' en exportar y calibracion 2	
-	.equ	op3		=	0x02		;opcion3: Lampara on en menu principal: 'Volver' en 
-	.equ	op4		=	0x03		;opcion4
-	.equ	menu1	=	0b00000000	;Menu inicial
-	.equ	menu2	=	0b01000000	;Menu exportar
-	.equ	menu3	=	0b10000000	;Menu Calibracion 1
-	.equ	menu4	=	0b11000000	;Menu Calibracion 2
-	.equ	maskOP	=	0b00000011	;para leer flags
-	.equ	flagUP	=	2
-	.equ	flagDW	=	3
-	.equ	flagRT	=	4
-	.equ	flagLmp	=	5
-	.equ	maskMN	=	0b11000000
+	.equ	op1			=	0x00		;opcion1: lectura en menu principal; 'Si' en exportar y calibracion 2
+	.equ	op2			=	0x01		;opcion2: calibracion en menu principal: 'No' en exportar y calibracion 2	
+	.equ	op3			=	0x02		;opcion3: Lampara on en menu principal: 'Volver' en 
+	.equ	op4			=	0x03		;opcion4
+	.equ	menu1		=	0b00000000	;Menu inicial
+	.equ	menu2		=	0b01000000	;Menu exportar
+	.equ	menu3		=	0b10000000	;Menu Calibracion 1
+	.equ	menu4		=	0b11000000	;Menu Calibracion 2
+	.equ	maskOP		=	0b00000011	;para leer flags
+	.equ	flagUP		=	2
+	.equ	flagDW		=	3
+	.equ	flagRT		=	4
+	.equ	flagLmp		=	5
+	.equ	maskMN		=	0b11000000
 	;LCD
-	.equ	fst		=	0x02 			;fin de string
-	.equ	sline	=	0xC0
+	.equ	fst			=	0x02 			;fin de string
+	.equ	sline		=	0xC0
+	.equ	lcdclear	=	0x01
+	.equ	lcdhome		=	0x02
+
 	;SPI
-	.equ	Cmaster =	0b01110001
-	.equ	Cslave =	0b11100000
+	.equ	Cmaster 	=	0b01110001
+	.equ	Cslave 		=	0b11100000
 	;USART
 
 ;-PuertoB(pin 0 ?;pines 1-5 SPI, pines 6 y 7 ?)
@@ -48,7 +51,7 @@
 
 ;*Defino Strings
 	.cseg
-		.org 0x0200 
+		.org 0x0300 
 			strLec:		.db	"Lectura",fst			;opcion lectura
 			strCal:		.db	"Calibracion",fst		;opcion calibracion
 			strLmpOn:	.db	"Lamp.*On*-Off",fst		;Lampara on
@@ -59,6 +62,7 @@
 			strNo:		.db "No ",fst
 			strBck:		.db	"Volver ",fst
 			strBsy:		.db	"Leyendo",fst
+			strExp:		.db	"Exportar a PC?"
 
 ;*Defino Variables
 	.dseg
@@ -135,6 +139,7 @@ mainloop:
 ;***********************************************************************
 check_keys:
 		in	tmp,PINC
+		
 
 ;FLAG ORIGEN<>FLAG DESTINO: LEO PULSADORES
 ;LEVANTO FLAG DE PULSADORES: LEO FLAGS MENU
@@ -156,7 +161,23 @@ main_menu:
 		breq	stepCal
 		cpi		tmp,op3
 		breq	stepLmp
+		rjmp	error
 paso2:
+;**************************************************************************
+;*	Menu Exportar
+;**************************************************************************
+export_menu:
+		mov		tmp,fla
+		andi	tmp,maskOP
+		cpi		tmp,op1
+		breq	stepSi
+		cpi		tmp,op2
+		breq	stepNo
+		rjmp	error
+Lambda_menu:
+
+
+confirm_menu:
 
 
 
@@ -188,6 +209,7 @@ stepCal:
 		rjmp	error
 		
 stepLmp:
+
 		;si flagUP:display_Cal
 		sbrc	fla,flagUP
 		rjmp	display_Cal
@@ -203,6 +225,11 @@ stepLmp:
 
 ;*Seleccionada Lectura
 display_Lec:
+
+		ldi		arg,lcdclear
+		rcall	LCD_command		
+		ldi		arg,lcdhome
+		rcall	LCD_command
 		;cargo primerlinea(seleccionada)
 		ldi		arg,'-'
 		rcall 	lcd_putchar
@@ -217,6 +244,11 @@ display_Lec:
 		rjmp	paso2
 
 display_Cal:
+
+		ldi		arg,lcdclear
+		rcall	LCD_command		
+		ldi		arg,lcdhome
+		rcall	LCD_command
 		;cargo primerlinea(seleccionada)
 		ldi		arg,'-'
 		rcall 	lcd_putchar
@@ -233,6 +265,11 @@ display_Cal:
 		rcall	LCD_Putstring
 		rjmp	paso2
 display_Lmp:
+		;vacio pantalla
+		ldi		arg,lcdclear
+		rcall	LCD_command		
+		ldi		arg,lcdhome
+		rcall	LCD_command
 		;cargo primerlinea
 		LoadstringX strCal
 		rcall	LCD_Putstring
@@ -251,14 +288,16 @@ display_Lmp:
 ;***********************************************************************
 ;*	Menu exportar
 ;***********************************************************************
-export_menu:
-
-
-Lambda_menu:
-
-
-confirm_menu:
-
+display_Lec:
+		ldi		arg,lcdclear
+		rcall	LCD_command		
+		ldi		arg,lcdhome
+		rcall	LCD_command
+		;cargo primerlinea(seleccionada)
+		ldi		arg,'-'
+		rcall 	lcd_putchar
+		LoadstringX strLec
+		rcall	LCD_Putstring
 
 
 ;******************************************************************
@@ -336,14 +375,6 @@ SPI_Wait:
 		ret
 
 
-
-
-
-
-
-
-
-
 ;****************************************************************
 ;*	Rutinas USART
 ;****************************************************************
@@ -385,7 +416,6 @@ psloop:
 		ld	arg,X
 		cpi	arg,fst
 		brne psloop
-		ldi	arg,
 		ret
 
 
