@@ -59,7 +59,7 @@
 			strLmd:		.db	"Ingrese Lambda ",fst
 			strCL:		.db	"Lambda:  ",fst	
 			strSi:		.db	"Si ",fst
-			strNo:		.db "No ",fst
+			strNo:		.db 	"No ",fst
 			strBck:		.db	"Volver ",fst
 			strBsy:		.db	"Leyendo",fst
 			strExp:		.db	"Exportar a PC?"
@@ -83,23 +83,24 @@
 
 
 
-
+	.cseg
+	.org 0
 
 
 ;*Defino macros
-	.MACRO	SPI_START;*	Elijo el SLAVE con ~SS (PortB,2) en LOW
+	.MACRO	SPI_START ;*	Elijo el SLAVE con ~SS (PortB,2) en LOW
 		cbi PORTB, pSS
 	.ENDMACRO
-	.MACRO	SPI_STOP;*	Elijo el SLAVE con ~SS (PortB,2) en LOW
+	.MACRO	SPI_STOP ;*	Elijo el SLAVE con ~SS (PortB,2) en LOW
 		sbi PORTB, pSS
 	.ENDMACRO
 
-	.MACRO	LoadstringX;*	Cargo string en X
+	.MACRO	LoadstringX ;*	Cargo string en X
 		ldi		Xl,low(@0)
 		ldi		Xh,high(@0)
 	.ENDMACRO
 
-	.MACRO	ubicar;*	Cargo string en X
+	.MACRO	ubicar ;*	Cargo string en X
 		mov		tmp,fla
 		cbr		tmp,@1
 		sbr		tmp,@0
@@ -107,9 +108,6 @@
 	.ENDMACRO
 
 
-
-	.cseg
-	.org 0
 
 		rjmp RESET
 
@@ -121,6 +119,7 @@ RESET:
 		out	SPL, tmp
 		ldi	tmp, high(RAMEND)
 		out	SPH, tmp
+
 		rcall startup
 mainloop:
 		mov		tmp,fla
