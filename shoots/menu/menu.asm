@@ -100,10 +100,10 @@
 	.ENDMACRO
 
 	.MACRO	ubicar;*	Cargo string en X
-		ldi		tmp,fla
+		mov		tmp,fla
 		cbr		tmp,@1
 		sbr		tmp,@0
-		ldi		fla,tmp
+		mov		fla,tmp
 	.ENDMACRO
 
 
@@ -144,17 +144,42 @@ mainloop:
 ;*	Chequeo si se presiono alguna tecla y seteo el flag correspondiente
 ;***********************************************************************
 check_keys:
-		in	tmp,PINC
+		;leo el puerto C
+		in		tmp,PINC
+		;si está presionado un boton va a quedar en 0 ese bit
+		sbrs	tmp,switchUP
+		rjmp	keyUP
+		sbrs	tmp,switchDW
+		rjmp	keyDW
+		sbrs	tmp,switchUP
+		rjmp	keyRT
+		;si no se presiono nada me vuelvo a fijar
+		mov		key,tmp
+		rjmp	check_keys
 		
+keyUP:
+		;se presiono key UP si no estába presionada antes seteo el flag y voy al mainloop, si si vuelvo
+		sbrc	key,switchUP
+		rjmp	check_keys
+		cbr		key,switchUP
+		sbr		fla,flagUP
+		rjmp	mainloop
+keyDW:
+		sbrc	key,switchDW
+		rjmp	check_keys
+		cbr		key,switchDW
+		sbr		fla,flagDW
+		rjmp	mainloop
+keyRT:
+		sbrc	key,switchRT
+		rjmp	check_keys
+		cbr		key,switchRT
+		mov		key,tmp
+		sbr		fla,flagRT
+		rjmp	mainloop
 
-;FLAG ORIGEN<>FLAG DESTINO: LEO PULSADORES
-;LEVANTO FLAG DE PULSADORES: LEO FLAGS MENU
-;DECIDO QUE HAGO
-;FLAG ORIGEN / FLAG DESTINO----	
-;FLAGORIGEN=FLAG DESTINO: NO HAGO NADA
 
 
-		
 ;***********************************************************************
 ;*	Menu inicial(por defecto entra aqui)
 ;***********************************************************************
@@ -236,7 +261,9 @@ stepLec:
 		rjmp	FN_Lec
 		;si noflag:display_lec
 		rjmp	display_Lec
-
+stepCal2SI:
+stepCal2No:
+stepCal2Back:
 stepCal:
 		;si flagUP:display_lec
 		sbrc	fla,flagUP
@@ -262,6 +289,9 @@ stepLmp:
 		rjmp	FN_Lmp
 		;si noflag:no deberia pasar
 		rjmp	error
+
+stepCal1:
+		
 		
 
 ;*Seleccionada Lectura
@@ -369,6 +399,14 @@ display_ExpSi:
 		LoadstringX strNo
 		rcall	LCD_Putstring
 		rjmp	check_keys
+
+;******************************************************************
+;*	Funciones
+;******************************************************************
+FN_export:
+FN_Lec:
+FN_Cal:
+FN_Lmp:
 ;******************************************************************
 ;*inicializo perifericos
 ;******************************************************************
@@ -383,15 +421,15 @@ startup:
 		;*Inicio el USART
 		rcall	USART_Init
 		;seteo los switches como entrada con pull up on
-		cbi		DDRD,switchUP
-		cbi		DDRD,switchDW
-		cbi		DDRD,switchRT
-		sbi		PORTD,switchUP
-		sbi		PORTD,switchDW
-		sbi		PORTD,switchRT
+		cbi		DDRC,switchUP
+		cbi		DDRC,switchDW
+		cbi		DDRC,switchRT
+		sbi		PORTC,switchUP
+		sbi		PORTC,switchDW
+		sbi		PORTC,switchRT
 		;seteo pin lampara como salida en 0
-		sbi		DDRD,lamp
-		cbi		PORTD,lamp
+		sbi		DDRC,lamp
+		cbi		PORTC,lamp
 		ret
 
 ;*****************************************************************
@@ -499,11 +537,9 @@ psloop:
 
 
 LCD_init:
-		; cargo ese valor en el registro tmporal
-		ldi	tmp, 0b00001110
-
-		; lo pongo en DDRD,con eso las lineas d control son salidas, y el resto entradas
-		out	DDRD, tmp
+		sbi	DDRC,LCD_RS
+		sbi DDRD,LCD_RW
+		sbi	DDRD,LCD_E
 
 		;hago un delay d 197ms 
 		rcall	LCD_delay
@@ -574,7 +610,7 @@ lcd_putchar:
 					;so mask off the low nibble
 		or	tmp, arg		;now set the argument bits in the Port value
 		out	PortD, tmp		;and write the port value
-		sbi	PortD, LCD_RS		;now take RS high for LCD char data register access
+		sbi	PortC, LCD_RS		;now take RS high for LCD char data register access
 		sbi	PortD, LCD_E		;strobe Enable
 		nop
 		nop
@@ -587,13 +623,13 @@ lcd_putchar:
 		cbr	arg, 0b00001111	;clear unused bits in argument
 		or	tmp, arg		;and set the required argument bits in the port value
 		out	PortD, tmp		;write data to port
-		sbi	PortD, LCD_RS		;again, set RS
+		sbi	PortC, LCD_RS		;again, set RS
 		sbi	PortD, LCD_E		;strobe Enable
 		nop
 		nop
 		nop
 		cbi	PortD, LCD_E
-		cbi	PortD, LCD_RS
+		cbi	PortC, LCD_RS
 		in	tmp, DDRD
 		cbr	tmp, 0b11110000	;data lines are input again
 		out	DDRD, tmp
@@ -634,7 +670,7 @@ LCD_getaddr:	;works just like LCD_getchar, but with RS low, return.7 is the busy
 		in	tmp, DDRD
 		andi tmp, 0b00001111;esto es al pedo
 		out	DDRD, tmp
-		cbi	PortD, LCD_RS;pongo en cero para decir q es instruccion
+		cbi	PortC, LCD_RS;pongo en cero para decir q es instruccion
 		sbi	PortD, LCD_RW; en uno para leer
 		sbi	PortD, LCD_E; seteo enable
 		nop
