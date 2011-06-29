@@ -1,2 +1,0 @@
-@ECHO OFF
-"C:\Program Files\Atmel\AVR Tools\AvrAssembler2\avrasm2.exe" -S "C:\dev\asm\LaboDeMicro2011-1\shoots\menu\labels.tmp" -fI -W+ie -o "C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.hex" -d "C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.obj" -e "C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.eep" -m "C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.map" "C:\dev\asm\LaboDeMicro2011-1\shoots\menu\menu.asm"
