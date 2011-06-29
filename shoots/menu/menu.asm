@@ -18,7 +18,7 @@
 	.equ	flagLmp		=	5
 	.equ	maskMN		=	0b11000000
 	;LCD
-	.equ	fst			=	0x02 			;fin de string
+	.equ	fst			=	0 			;fin de string en NULL character
 	.equ	sline		=	0xC0
 	.equ	lcdclear	=	0x01
 	.equ	lcdhome		=	0x02
@@ -48,10 +48,13 @@
 	.equ	LCD_RW	= 2
 	.equ	LCD_E	= 3
 
+;*Defino Variables
+	.dseg
+		string:	.byte	17
 
 ;*Defino Strings
 	.cseg
-		.org 0x0300 
+		.org 0x0400    ;Guarda las tablas en 0x0800 de Memoria de Programa (?)
 			strLec:		.db	"Lectura",fst			;opcion lectura
 			strCal:		.db	"Calibracion",fst		;opcion calibracion
 			strLmpOn:	.db	"Lamp.*On*-Off",fst		;Lampara on
@@ -59,14 +62,10 @@
 			strLmd:		.db	"Ingrese Lambda ",fst
 			strCL:		.db	"Lambda:  ",fst	
 			strSi:		.db	"Si ",fst
-			strNo:		.db 	"No ",fst
+			strNo:		.db	"No ",fst
 			strBck:		.db	"Volver ",fst
 			strBsy:		.db	"Leyendo",fst
-			strExp:		.db	"Exportar a PC?"
-
-;*Defino Variables
-	.dseg
-		string:	.byte	17
+			strExp:		.db	"Exportar a PC? ",fst
 
 
 ;*Defino simbolos
@@ -83,10 +82,6 @@
 
 
 
-	.cseg
-	.org 0
-
-
 ;*Defino macros
 	.MACRO	SPI_START ;*	Elijo el SLAVE con ~SS (PortB,2) en LOW
 		cbi PORTB, pSS
@@ -100,6 +95,11 @@
 		ldi		Xh,high(@0)
 	.ENDMACRO
 
+	.MACRO	LoadstringZ ;*	Cargo string en X
+		ldi		Zh,high(@0<<1)
+		ldi		Zl,low(@0<<1)
+	.ENDMACRO
+
 	.MACRO	ubicar ;*	Cargo string en X
 		mov		tmp,fla
 		cbr		tmp,@1
@@ -108,6 +108,8 @@
 	.ENDMACRO
 
 
+	.cseg
+		.org 0x0000
 
 		rjmp RESET
 
@@ -121,6 +123,7 @@ RESET:
 		out	SPH, tmp
 
 		rcall startup
+
 mainloop:
 		mov		tmp,fla
 		andi	tmp,maskMN
@@ -297,82 +300,106 @@ stepCal1:
 display_Lec:
 		ubicar	op1,maskOP
 		ldi		arg,lcdclear
-		rcall	LCD_command		
+		rcall	LCD_command
+		rcall	LCD_wait		
 		ldi		arg,lcdhome
 		rcall	LCD_command
+		rcall	LCD_wait
 		;cargo primerlinea(seleccionada)
-		ldi		arg,'-'
+		ldi		arg,'>'
 		rcall 	lcd_putchar
-		LoadstringX strLec
+
+		LoadstringZ strLec
 		rcall	LCD_Putstring
 
-		;Cargo segunda linea
+		;cargo segunda linea(no seleccionada)
+
 		ldi		arg,sline
 		rcall	LCD_command
-		LoadstringX strCal
+		rcall	LCD_wait
+
+		; Calibro con linea superior
+		ldi		arg,0x20
+		rcall 	lcd_putchar
+
+		LoadstringZ strCal
 		rcall	LCD_Putstring
 		rjmp	check_keys
 
 display_Cal:
 		ubicar	op2,maskOP
 		ldi		arg,lcdclear
-		rcall	LCD_command		
+		rcall	LCD_command
+		rcall	LCD_wait		
 		ldi		arg,lcdhome
 		rcall	LCD_command
+		rcall	LCD_wait
 		;cargo primerlinea(seleccionada)
-		ldi		arg,'-'
+		ldi		arg,'>'
 		rcall 	lcd_putchar
-		LoadstringX strCal
+		LoadstringZ strCal
 		rcall	LCD_Putstring
 
-		;Cargo segunda linea
+		;cargo segunda linea(no seleccionada)
+		ldi		arg,' '
+		rcall 	lcd_putchar
+
 		ldi		arg,sline
 		rcall	LCD_command
+		rcall	LCD_wait
 		sbrs	fla,flagLmp
-		LoadstringX strLmpOff
+		LoadstringZ strLmpOff
 		sbrc	fla,flagLmp
-		LoadstringX strLmpOn
+		LoadstringZ strLmpOn
 		rcall	LCD_Putstring
 		rjmp	check_keys
 display_Lmp:
 		ubicar	op3,maskOP
 		;vacio pantalla
 		ldi		arg,lcdclear
-		rcall	LCD_command		
+		rcall	LCD_command	
+		rcall	LCD_wait	
 		ldi		arg,lcdhome
 		rcall	LCD_command
-		;cargo primerlinea
-		LoadstringX strCal
+		rcall	LCD_wait
+		;cargo primer linea(no seleccionada)
+		ldi		arg,' '
+		rcall 	lcd_putchar
+
+		LoadstringZ strCal
 		rcall	LCD_Putstring
 
 		;Cargo segunda linea(seleccionada)
-		ldi		arg,'-'
+		ldi		arg,'>'
 		rcall 	lcd_putchar
 		ldi		arg,sline
 		rcall	LCD_command
+		rcall	LCD_wait
 		sbrs	fla,flagLmp
-		LoadstringX strLmpOff
+		LoadstringZ strLmpOff
 		sbrc	fla,flagLmp
-		LoadstringX strLmpOn
+		LoadstringZ strLmpOn
 		rcall	LCD_Putstring
 		rjmp	check_keys
 display_ExpNo:
 		ubicar	op2,maskOP
 		ldi		arg,lcdclear
-		rcall	LCD_command		
+		rcall	LCD_command
+		rcall	LCD_wait	
 		ldi		arg,lcdhome
 		rcall	LCD_command
+		rcall	LCD_wait
 		;cargo primerlinea(seleccionada)
-		LoadstringX strExp
+		LoadstringZ strExp
 		rcall	LCD_Putstring
 		;Cargo segunda linea
-		LoadstringX strSi
+		LoadstringZ strSi
 		rcall	LCD_Putstring
 		ldi		arg,'/'
 		rcall 	lcd_putchar
 		ldi		arg,'*'
 		rcall 	lcd_putchar		
-		LoadstringX strNo
+		LoadstringZ strNo
 		rcall	LCD_Putstring
 		ldi		arg,'*'
 		rcall 	lcd_putchar
@@ -380,22 +407,24 @@ display_ExpNo:
 display_ExpSi:
 		ubicar	op1,maskOP
 		ldi		arg,lcdclear
-		rcall	LCD_command		
+		rcall	LCD_command
+		rcall	LCD_wait	
 		ldi		arg,lcdhome
 		rcall	LCD_command
+		rcall	LCD_wait
 		;cargo primerlinea(seleccionada)
-		LoadstringX strExp
+		LoadstringZ strExp
 		rcall	LCD_Putstring
 		;Cargo segunda linea
 		ldi		arg,'*'
 		rcall 	lcd_putchar
-		LoadstringX strSi
+		LoadstringZ strSi
 		rcall	LCD_Putstring
 		ldi		arg,'*'
 		rcall 	lcd_putchar
 		ldi		arg,'/'
 		rcall 	lcd_putchar
-		LoadstringX strNo
+		LoadstringZ strNo
 		rcall	LCD_Putstring
 		rjmp	check_keys
 
@@ -411,6 +440,7 @@ FN_Lmp:
 ;******************************************************************
 startup:
 		;*inicializo Flags
+		;ldi fla,0x00
 		;*	Habilito el LCD
 		rcall	LCD_init
 		;*	Espero la busy flag
@@ -418,7 +448,7 @@ startup:
 		;*Inicio el SPI como Master
 		rcall 	SPI_Minit
 		;*Inicio el USART
-		rcall	USART_Init
+		;rcall	USART_Init
 		;seteo los switches como entrada con pull up on
 		cbi		DDRC,switchUP
 		cbi		DDRC,switchDW
@@ -513,13 +543,11 @@ ret
 ;*****************************************************************
 
 LCD_Putstring:
-		ld	arg,X
+		lpm	arg,Z+
 psloop:	
-		push	arg
 		rcall LCD_Putchar
-		pop		arg
-		adiw Xh:Xl,1
-		ld	arg,X
+		;adiw Zh:Zl,1
+		lpm	arg,Z+
 		cpi	arg,fst
 		brne psloop
 		ret
@@ -604,7 +632,7 @@ lcd_putchar:
 		sbr	tmp, 0b11110000	;set the data lines to output
 		out	DDRD, tmp		;write value to DDRD
 		in	tmp, PortD		;then get the data from PortD
-		cbr	tmp, 0b11111110	;clear ALL LCD lines (data and control!)
+		cbr	tmp, 0b11111100	;clear ALL LCD lines (data and control!)
 		cbr	arg, 0b00001111	;we have to write the high nibble of our argument first
 					;so mask off the low nibble
 		or	tmp, arg		;now set the argument bits in the Port value
@@ -632,6 +660,7 @@ lcd_putchar:
 		in	tmp, DDRD
 		cbr	tmp, 0b11110000	;data lines are input again
 		out	DDRD, tmp
+		rcall LCD_wait
 		ret
 
 lcd_command:	;same as LCD_putchar, but with RS low!
@@ -640,7 +669,7 @@ lcd_command:	;same as LCD_putchar, but with RS low!
 		sbr	tmp, 0b11110000; hago un or, entonces pongo en 1 el nibble alto
 		out	DDRD, tmp;pongo este valor en DDRD x lo tanto d7-d4 son salidas
 		in	tmp, PortD;guardo el valor dl puerto
-		cbr	tmp, 0b11111110;hago una and con 01,borro todos los bits
+		cbr	tmp, 0b11111100;hago una and con 01,borro todos los bits
 		cbr	arg, 0b00001111;hago una and con F0, borro los 4 bits d control
 		or	tmp, arg;hago una or me quedan los 4 bits altos d la instruccion y cero debajo
 		out	PortD, tmp; lo cargo en el puerto
