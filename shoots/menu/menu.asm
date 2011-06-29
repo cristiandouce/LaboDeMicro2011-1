@@ -12,10 +12,15 @@
 	.equ	menu3		=	0b10000000	;Menu Calibracion 
 	.equ	menu4		=	0b11000000	;Menu Medición
 	.equ	maskOP		=	0b00000011	;para leer flags
+	.equ	maskRESET	=	0b00011100
 	.equ	flagUP		=	2
 	.equ	flagDW		=	3
 	.equ	flagRT		=	4
 	.equ	flagLmp		=	5
+	.equ	maskUP		=	0b00000100
+	.equ	maskDW		=	0b00001000
+	.equ	maskRT		=	0b00010000
+	.equ	maskLmp		=	0b00100000
 	.equ	maskMN		=	0b11000000
 	;LCD
 	.equ	fst			=	0 			;fin de string en NULL character
@@ -60,12 +65,13 @@
 			strLmpOn:	.db	"Lamp.*On*-Off",fst		;Lampara on
 			strLmpOff:	.db	"Lamp.On-*Off*",fst		;Lampara on
 			strLmd:		.db	"Ingrese Lambda ",fst
-			strCL:		.db	"Lambda:  ",fst	
-			strSi:		.db	"Si ",fst
-			strNo:		.db	"No ",fst
+			strCL:		.db	"Lambda:  ",fst
+			strSi:		.db	"Si",fst,fst
+			strNo:		.db	"No",fst,fst
 			strBck:		.db	"Volver ",fst
 			strBsy:		.db	"Leyendo",fst
 			strExp:		.db	"Exportar a PC? ",fst
+			strDone:	.db	"Listo",fst
 
 
 ;*Defino simbolos
@@ -107,6 +113,20 @@
 		mov		fla,tmp
 	.ENDMACRO
 
+	.MACRO	SetLcdClearAtHome
+		ldi		arg,lcdclear
+		rcall	LCD_command
+		rcall	LCD_wait	
+		ldi		arg,lcdhome
+		rcall	LCD_command
+		rcall	LCD_wait
+	.ENDMACRO
+	
+	.MACRO	Secondline
+		ldi		arg,sline
+		rcall	LCD_command
+		rcall	LCD_wait
+	.ENDMACRO
 
 	.cseg
 		.org 0x0000
@@ -135,6 +155,8 @@ mainloop:
 		breq	calib_menu
 		cpi		tmp,menu4
 		breq	res_menu
+		rjmp	error
+
 	
 
 
@@ -146,6 +168,8 @@ mainloop:
 ;*	Chequeo si se presiono alguna tecla y seteo el flag correspondiente
 ;***********************************************************************
 check_keys:
+		;reseto las flags de las keys
+		cbr		fla,maskRESET
 		;leo el puerto C
 		in		tmp,PINC
 		;si está presionado un boton va a quedar en 0 ese bit
@@ -153,31 +177,39 @@ check_keys:
 		rjmp	keyUP
 		sbrs	tmp,switchDW
 		rjmp	keyDW
-		sbrs	tmp,switchUP
+		sbrs	tmp,switchRT
 		rjmp	keyRT
+		sbrc	tmp,switchUP
+		sbr		key,maskUP
+		sbrc	tmp,switchDW
+		sbr		key,maskDW
+		sbrc	tmp,switchRT
+		sbr		key,maskRT
 		;si no se presiono nada me vuelvo a fijar
-		mov		key,tmp
+
 		rjmp	check_keys
 		
 keyUP:
 		;se presiono key UP si no estába presionada antes seteo el flag y voy al mainloop, si si vuelvo
-		sbrc	key,switchUP
+
+		sbrs	key,switchUP
 		rjmp	check_keys
-		cbr		key,switchUP
-		sbr		fla,flagUP
+		cbr		key,maskUP
+		sbr		fla,maskUP
 		rjmp	mainloop
+
 keyDW:
-		sbrc	key,switchDW
+		sbrs	key,switchDW
 		rjmp	check_keys
-		cbr		key,switchDW
-		sbr		fla,flagDW
+		cbr		key,maskDW
+		sbr		fla,maskDW
 		rjmp	mainloop
 keyRT:
-		sbrc	key,switchRT
+		sbrs	key,switchRT
 		rjmp	check_keys
-		cbr		key,switchRT
-		mov		key,tmp
-		sbr		fla,flagRT
+		cbr		key,maskRT
+		sbr		fla,maskRT
+
 		rjmp	mainloop
 
 
@@ -249,7 +281,7 @@ stepExpNo:
 		rjmp	display_ExpSi
 		;si flagRT; FN_Lec
 		sbrc	fla,flagRT
-		rjmp	check_keys
+		rjmp	display_Lec
 		rjmp	error
 stepLec:
 		;si flagUP:nada
@@ -299,12 +331,7 @@ stepCal1:
 ;*Seleccionada Lectura
 display_Lec:
 		ubicar	op1,maskOP
-		ldi		arg,lcdclear
-		rcall	LCD_command
-		rcall	LCD_wait		
-		ldi		arg,lcdhome
-		rcall	LCD_command
-		rcall	LCD_wait
+		SetLcdClearAtHome
 		;cargo primerlinea(seleccionada)
 		ldi		arg,'>'
 		rcall 	lcd_putchar
@@ -313,10 +340,8 @@ display_Lec:
 		rcall	LCD_Putstring
 
 		;cargo segunda linea(no seleccionada)
-
-		ldi		arg,sline
-		rcall	LCD_command
-		rcall	LCD_wait
+		
+		Secondline
 
 		; Calibro con linea superior
 		ldi		arg,0x20
@@ -328,71 +353,51 @@ display_Lec:
 
 display_Cal:
 		ubicar	op2,maskOP
-		ldi		arg,lcdclear
-		rcall	LCD_command
-		rcall	LCD_wait		
-		ldi		arg,lcdhome
-		rcall	LCD_command
-		rcall	LCD_wait
+		SetLcdClearAtHome
 		;cargo primerlinea(seleccionada)
 		ldi		arg,'>'
 		rcall 	lcd_putchar
 		LoadstringZ strCal
 		rcall	LCD_Putstring
-
 		;cargo segunda linea(no seleccionada)
+		Secondline
 		ldi		arg,' '
-		rcall 	lcd_putchar
-
-		ldi		arg,sline
-		rcall	LCD_command
-		rcall	LCD_wait
+		rcall 	lcd_putchar		
 		sbrs	fla,flagLmp
-		LoadstringZ strLmpOff
+		rcall	loadlmpoff
 		sbrc	fla,flagLmp
-		LoadstringZ strLmpOn
+		rcall	loadlmpon
+
 		rcall	LCD_Putstring
 		rjmp	check_keys
 display_Lmp:
 		ubicar	op3,maskOP
 		;vacio pantalla
-		ldi		arg,lcdclear
-		rcall	LCD_command	
-		rcall	LCD_wait	
-		ldi		arg,lcdhome
-		rcall	LCD_command
-		rcall	LCD_wait
+		SetLcdClearAtHome
 		;cargo primer linea(no seleccionada)
 		ldi		arg,' '
 		rcall 	lcd_putchar
-
 		LoadstringZ strCal
 		rcall	LCD_Putstring
-
 		;Cargo segunda linea(seleccionada)
+		Secondline
 		ldi		arg,'>'
 		rcall 	lcd_putchar
-		ldi		arg,sline
-		rcall	LCD_command
-		rcall	LCD_wait
 		sbrs	fla,flagLmp
-		LoadstringZ strLmpOff
+		rcall	loadlmpoff
 		sbrc	fla,flagLmp
-		LoadstringZ strLmpOn
+		rcall	loadlmpon
 		rcall	LCD_Putstring
 		rjmp	check_keys
 display_ExpNo:
 		ubicar	op2,maskOP
-		ldi		arg,lcdclear
-		rcall	LCD_command
-		rcall	LCD_wait	
-		ldi		arg,lcdhome
-		rcall	LCD_command
-		rcall	LCD_wait
+		SetLcdClearAtHome
 		;cargo primerlinea(seleccionada)
 		LoadstringZ strExp
 		rcall	LCD_Putstring
 		;Cargo segunda linea
+
+		Secondline
 		LoadstringZ strSi
 		rcall	LCD_Putstring
 		ldi		arg,'/'
@@ -406,16 +411,15 @@ display_ExpNo:
 		rjmp	check_keys
 display_ExpSi:
 		ubicar	op1,maskOP
-		ldi		arg,lcdclear
-		rcall	LCD_command
-		rcall	LCD_wait	
-		ldi		arg,lcdhome
-		rcall	LCD_command
-		rcall	LCD_wait
+
+		SetLcdClearAtHome
+
 		;cargo primerlinea(seleccionada)
 		LoadstringZ strExp
 		rcall	LCD_Putstring
 		;Cargo segunda linea
+
+		Secondline
 		ldi		arg,'*'
 		rcall 	lcd_putchar
 		LoadstringZ strSi
@@ -428,13 +432,53 @@ display_ExpSi:
 		rcall	LCD_Putstring
 		rjmp	check_keys
 
+loadlmpoff:
+		LoadstringZ strLmpOff
+		ret
+		
+loadlmpon:
+		LoadstringZ strLmpOn
+		ret
+
 ;******************************************************************
 ;*	Funciones
 ;******************************************************************
 FN_export:
+		ubicar	menu1,maskMN
+		ubicar	op1,maskOP
+		SetLcdClearAtHome
+		LoadstringZ strDone
+		rcall	LCD_Putstring
+		rcall	Delay
+		rjmp	display_Lec
 FN_Lec:
+		SetLcdClearAtHome
+		LoadstringZ strBsy
+		rcall	LCD_Putstring
+		ldi		arg,'.'
+		rcall	LCD_Putchar
+		rcall	Delay
+		ldi		arg,'.'
+		rcall	LCD_Putchar
+		rcall	Delay
+		ldi		arg,'.'
+		rcall	LCD_Putchar
+		rcall	Delay
+		SetLcdClearAtHome
+		LoadstringZ strBsy
+		ubicar	menu2,maskMN
+		rjmp	display_ExpSi
+
 FN_Cal:
 FN_Lmp:
+		sbrs	fla,flagLmp
+		sbi		PORTC,lamp		
+		sbrc	fla,flagLmp
+		cbi		PORTC,lamp
+		ldi		tmp,maskLmp
+		eor		fla,tmp	
+		rjmp	display_lmp
+
 ;******************************************************************
 ;*inicializo perifericos
 ;******************************************************************
@@ -743,5 +787,13 @@ LCD_delay_inner:
 		brne LCD_delay_outer;sale dl ciclo si r2 es igual a cero
 		ret
 
-
+Delay:
+		rcall		LCD_delay	
+		rcall		LCD_delay
+		rcall		LCD_delay
+		rcall		LCD_delay
+		rcall		LCD_delay
+		ret
 error:
+		rjmp error
+
