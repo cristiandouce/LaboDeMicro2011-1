@@ -68,10 +68,11 @@
 			strCL:		.db	"Confirma lambda?",fst,fst
 			strSi:		.db	"Si",fst,fst
 			strNo:		.db	"No",fst,fst
-			strBck:		.db	"Volver ",fst
+			strBck:		.db	"Volver",fst,fst
 			strBsy:		.db	"Leyendo",fst
 			strExp:		.db	"Exportar a PC? ",fst
 			strDone:	.db	"Listo",fst
+			strError:	.db	"Error!!",fst
 
 
 ;*Defino simbolos
@@ -305,7 +306,7 @@ stepExpNo:
 		rjmp	display_ExpSi
 		;si flagRT; FN_Lec
 		sbrc	fla,flagRT
-		rjmp	display_Lec
+		rjmp	FN_Backtomain
 		rjmp	error
 stepLec:
 		;si flagUP:nada
@@ -770,27 +771,6 @@ SPI_Minit:
 		in tmp, SPSR
 		in tmp, SPDR
 		ret
-;******************************************************************
-;*	Enviar un String por SPI
-;******************************************************************
-SPI_Sendstring:								;!
-		ldi	con,0x00						;!
-ssloop:										;!
-		ldi Zl,0x00							;!
-		ldi	Zh,0x06							;!			
-		add Zl,con							;!						
-		lpm	rtn,Z							;!				
-		out	spdr,rtn						;!		
-		in	dta,spdr						;!HAY QUE ADAPTARLA			
-		rcall SPI_Wait						;!						
-		ldi	Yl,low(string)					;!						
-		ldi	Yh,high(string)					;!						
-		add	Yl,con							;!			
-		st	Y,dta							;!			
-		inc con								;!		
-		cpi	rtn,fst							;!	
-		brne ssloop							;!					
-		ret									;!
 
 ;*****************************************************************
 ;*	Espera del fin de la recepción SPI
@@ -1052,5 +1032,9 @@ BCDtoLCD:
 		
 
 error:
-		rjmp error
+		SetLcdClearAtHome
+		LoadstringZ strError
+		rcall	LCD_Putstring
+error2:
+		rjmp error2
 
