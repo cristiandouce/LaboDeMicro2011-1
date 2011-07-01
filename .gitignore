@@ -1,3 +1,6 @@
 *.LST
 *.SDI
 *.tmp
+*.obj
+*.map
+*.bat

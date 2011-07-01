@@ -65,19 +65,20 @@
 			strLmpOn:	.db	"Lamp.*On*-Off",fst		;Lampara on
 			strLmpOff:	.db	"Lamp.On-*Off*",fst		;Lampara on
 			strLmd:		.db	"Ingrese Lambda ",fst
-			strCL:		.db	"Lambda:  ",fst
+			strCL:		.db	"Confirma lambda?",fst,fst
 			strSi:		.db	"Si",fst,fst
 			strNo:		.db	"No",fst,fst
-			strBck:		.db	"Volver ",fst
+			strBck:		.db	"Volver",fst,fst
 			strBsy:		.db	"Leyendo",fst
 			strExp:		.db	"Exportar a PC? ",fst
 			strDone:	.db	"Listo",fst
+			strError:	.db	"Error!!",fst
 
 
 ;*Defino simbolos
 	.def	tmp		=	r16		;Registro para uso general
 	.def	arg		=	r17		;Argumentos para pasar a funciones
-	.def	opc		=	r18		;Opcion seleccionada
+	.def	aux		=	r18		;registro auxiliar
 	.def	fla		=	r19		;Registro para flags:b(0-1):Opcion global.b2:switchUPon
 								;b3:switchDWon ;b4:switchRTon; b5:on/off; b6-7 tipo de menu
 	.def	lmd		=	r20		;digito de lambda
@@ -156,11 +157,6 @@ mainloop:
 		cpi		tmp,menu4
 		breq	res_menu
 		rjmp	error
-
-	
-
-
-
 
 
 
@@ -263,6 +259,35 @@ res_menu:
 ;**************************************************************************
 ;*	Acciones en menues
 ;**************************************************************************
+
+stepCal:
+		;si flagUP:display_lec
+		sbrc	fla,flagUP
+		rjmp	display_lec
+		;si flagDW:display_Lmp
+		sbrc	fla,flagDW
+		rjmp	display_Lmp
+		;si flagRT; FN_Cal
+		sbrc	fla,flagRT
+		rjmp	FN_Cal
+		;si noflag:no deberia pasar
+		rjmp	error
+		
+
+
+stepLmp:
+		;si flagUP:display_Cal
+		sbrc	fla,flagUP
+		rjmp	display_Cal
+		;si flagDW:nada
+		sbrc	fla,flagDW
+		rjmp	check_keys
+		;si flagRT; FN_Lmp
+		sbrc	fla,flagRT
+		rjmp	FN_Lmp
+		;si noflag:no deberia pasar
+		rjmp	error
+
 stepExpSi:
 		sbrc	fla,flagUP
 		rjmp	display_ExpNo
@@ -281,7 +306,7 @@ stepExpNo:
 		rjmp	display_ExpSi
 		;si flagRT; FN_Lec
 		sbrc	fla,flagRT
-		rjmp	display_Lec
+		rjmp	FN_Backtomain
 		rjmp	error
 stepLec:
 		;si flagUP:nada
@@ -296,36 +321,155 @@ stepLec:
 		;si noflag:display_lec
 		rjmp	display_Lec
 stepCal2SI:
-stepCal2No:
-stepCal2Back:
-stepCal:
-		;si flagUP:display_lec
+		;si flagUP:display_Cal2Back
 		sbrc	fla,flagUP
-		rjmp	display_lec
-		;si flagDW:display_Lmp
+		rjmp	display_Cal2Back
+		;si flagDW:display_Cal2No
 		sbrc	fla,flagDW
-		rjmp	display_Lmp
-		;si flagRT; FN_Cal
+		rjmp	display_Cal2No
+		;si flagRT; FN_calibrar
+		sbrc	fla,flagRT
+		rjmp	FN_calibrar
+		rjmp	error
+stepCal2No:
+		sbrc	fla,flagUP
+		rjmp	display_Cal2Si
+		;si flagDW:display_Cal
+		sbrc	fla,flagDW
+		rjmp	display_Cal2Back
+		;si flagRT; 
 		sbrc	fla,flagRT
 		rjmp	FN_Cal
-		;si noflag:no deberia pasar
 		rjmp	error
-		
-stepLmp:
-		;si flagUP:display_Cal
+stepCal2Back:
 		sbrc	fla,flagUP
-		rjmp	display_Cal
+		rjmp	display_Cal2No
+		;si flagDW:display_Cal
+		sbrc	fla,flagDW
+		rjmp	display_Cal2Si
+		;si flagRT; FN_Lec
+		sbrc	fla,flagRT
+		rjmp	FN_Backtomain
+		rjmp	error
+
+
+
+stepCal1:
+		;si flagUP:subirdigito
+		sbrc	fla,flagUP
+		rjmp	display_Cal1up
 		;si flagDW:nada
 		sbrc	fla,flagDW
-		rjmp	check_keys
+		rjmp	display_Cal1down
 		;si flagRT; FN_Lmp
 		sbrc	fla,flagRT
-		rjmp	FN_Lmp
+		rjmp	display_Cal1confirm
 		;si noflag:no deberia pasar
 		rjmp	error
 
-stepCal1:
+
+
+
+display_Cal1up:
+		rcall	initiatedisplaycal1
+		inc		aux
+		cpi		aux,0x0A
+		brge	largoarriba
+regresodelargoarriba:
+		cpi		con,0x01
+		breq	dispdigito1
+		cpi		con,0x02
+		breq	dispdigito2
+		cpi		con,0x03
+		breq	dispdigito3
+		rjmp	error
+
+largoarriba:
+		ldi		aux,0x00
+		rjmp	regresodelargoarriba
+	
+display_Cal1down:
+		rcall	initiatedisplaycal1
+		dec		aux
+		cpi		aux,0xFF
+		breq	largoabajo
+regresodelargoabajo:
+		cpi		con,0x01
+		breq	dispdigito1
+		cpi		con,0x02
+		breq	dispdigito2
+		cpi		con,0x03
+		breq	dispdigito3
+		rjmp	error		
+
+largoabajo:
+		ldi		aux,0x09
+		rjmp	regresodelargoabajo
+
+display_Cal1confirm:
+		rcall	initiatedisplaycal1
+		inc		con
+		cpi		con,0x01
+		breq	start_digito1
+		cpi		con,0x02
+		breq	start_digito2
+		cpi		con,0x03
+		breq	start_digito3
+		cpi		con,0x04
+		breq	sigpaso
+		rjmp	error
+
+initiatedisplaycal1:
+		SetLcdClearAtHome
+		LoadstringZ strLmd
+		rcall	LCD_Putstring
+		Secondline
+		ret
+
+start_digito1:
+		ldi		aux,0x00
+		rjmp	dispdigito1
 		
+start_digito2:		
+		mov		lmd,aux
+		ldi		aux,0x00
+		rjmp	dispdigito2
+
+start_digito3:
+		swap	aux
+		or		lmd,aux
+		ldi		aux,0x00
+		rjmp	dispdigito3
+
+		
+dispdigito1:
+		mov		arg,aux
+		rcall	BCDtoLCD
+		rjmp	check_keys
+
+dispdigito2:
+		mov		arg,lmd
+		rcall	BCDtoLCD
+		mov		arg,aux
+		rcall	BCDtoLCD
+		rjmp	check_keys
+
+dispdigito3:
+		mov		arg,lmd
+		ldi		tmp,0x0F
+		and		arg,tmp
+		rcall	BCDtoLCD
+		mov		arg,lmd
+		ldi		tmp,0xF0
+		and		arg,tmp
+		swap	arg
+		rcall	BCDtoLCD
+		mov		arg,aux
+		rcall	BCDtoLCD
+		rjmp	check_keys
+sigpaso:
+		ubicar	op1,maskOP
+		rjmp	display_Cal2Si
 		
 
 ;*Seleccionada Lectura
@@ -432,6 +576,92 @@ display_ExpSi:
 		rcall	LCD_Putstring
 		rjmp	check_keys
 
+display_Cal2Si:
+		ubicar	op1,maskOP
+
+		SetLcdClearAtHome
+
+		;cargo primerlinea(seleccionada)
+		LoadstringZ strCL
+		rcall	LCD_Putstring
+		;Cargo segunda linea
+
+		Secondline
+		ldi		arg,'*'
+		rcall 	lcd_putchar
+		LoadstringZ strSi
+		rcall	LCD_Putstring
+		ldi		arg,'*'
+		rcall 	lcd_putchar
+		ldi		arg,'/'
+		rcall 	lcd_putchar
+		LoadstringZ strNo
+		rcall	LCD_Putstring
+		ldi		arg,'/'
+		rcall 	lcd_putchar
+		LoadstringZ strBck
+		rcall	LCD_Putstring
+		rjmp	check_keys
+
+
+
+display_Cal2No:
+		ubicar	op2,maskOP
+
+		SetLcdClearAtHome
+
+		;cargo primerlinea(seleccionada)
+		LoadstringZ strCL
+		rcall	LCD_Putstring
+		;Cargo segunda linea
+
+		Secondline
+		LoadstringZ strSi
+		rcall	LCD_Putstring
+		ldi		arg,'/'
+		rcall 	lcd_putchar
+		ldi		arg,'*'
+		rcall 	lcd_putchar
+		LoadstringZ strNo
+		rcall	LCD_Putstring
+		ldi		arg,'*'
+		rcall 	lcd_putchar
+		ldi		arg,'/'
+		rcall 	lcd_putchar
+		LoadstringZ strBck
+		rcall	LCD_Putstring
+		rjmp	check_keys
+
+
+
+display_Cal2Back:
+		ubicar	op3,maskOP
+
+		SetLcdClearAtHome
+
+		;cargo primerlinea(seleccionada)
+		LoadstringZ strCL
+		rcall	LCD_Putstring
+		;Cargo segunda linea
+
+		Secondline
+		LoadstringZ strSi
+		rcall	LCD_Putstring
+		ldi		arg,'/'
+		rcall 	lcd_putchar
+		LoadstringZ strNo
+		rcall	LCD_Putstring
+		ldi		arg,'/'
+		rcall 	lcd_putchar
+		ldi		arg,'*'
+		rcall 	lcd_putchar
+		LoadstringZ strBck
+		rcall	LCD_Putstring
+		ldi		arg,'*'
+		rcall 	lcd_putchar
+		rjmp	check_keys
+
+
 loadlmpoff:
 		LoadstringZ strLmpOff
 		ret
@@ -443,6 +673,14 @@ loadlmpon:
 ;******************************************************************
 ;*	Funciones
 ;******************************************************************
+FN_calibrar:
+		ubicar	menu1,maskMN
+		ubicar	op1,maskOP
+		SetLcdClearAtHome
+		LoadstringZ strSi
+		rcall	LCD_Putstring
+		rcall	Delay
+		rjmp	display_Lec
 FN_export:
 		ubicar	menu1,maskMN
 		ubicar	op1,maskOP
@@ -469,7 +707,18 @@ FN_Lec:
 		ubicar	menu2,maskMN
 		rjmp	display_ExpSi
 
+
+FN_Backtomain:
+		ubicar	menu1,maskMN
+		ubicar	op1,maskOP
+		SetLcdClearAtHome
+		rjmp	display_Lec
+
 FN_Cal:
+		ldi		con,0x00
+		ubicar	op4,maskOP
+		ubicar	menu3,maskmn
+		rjmp	display_Cal1confirm
 FN_Lmp:
 		sbrs	fla,flagLmp
 		sbi		PORTC,lamp		
@@ -522,27 +771,6 @@ SPI_Minit:
 		in tmp, SPSR
 		in tmp, SPDR
 		ret
-;******************************************************************
-;*	Enviar un String por SPI
-;******************************************************************
-SPI_Sendstring:								;!
-		ldi	con,0x00						;!
-ssloop:										;!
-		ldi Zl,0x00							;!
-		ldi	Zh,0x06							;!			
-		add Zl,con							;!						
-		lpm	rtn,Z							;!				
-		out	spdr,rtn						;!		
-		in	dta,spdr						;!HAY QUE ADAPTARLA			
-		rcall SPI_Wait						;!						
-		ldi	Yl,low(string)					;!						
-		ldi	Yh,high(string)					;!						
-		add	Yl,con							;!			
-		st	Y,dta							;!			
-		inc con								;!		
-		cpi	rtn,fst							;!	
-		brne ssloop							;!					
-		ret									;!
 
 ;*****************************************************************
 ;*	Espera del fin de la recepción SPI
@@ -794,6 +1022,19 @@ Delay:
 		rcall		LCD_delay
 		rcall		LCD_delay
 		ret
+
+BCDtoLCD:
+		ldi	tmp,0x30
+		add	arg,tmp
+		rcall	lcd_putchar
+		ret
+		
+		
+
 error:
-		rjmp error
+		SetLcdClearAtHome
+		LoadstringZ strError
+		rcall	LCD_Putstring
+error2:
+		rjmp error2
 
