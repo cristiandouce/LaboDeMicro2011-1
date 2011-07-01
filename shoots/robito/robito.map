@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.17  C:\dev\repos\LaboDeMicro2011-1\shoots\robito\robito.asm Wed Jun 29 16:50:46 2011
+AVRASM ver. 2.1.17  C:\dev\repos\LaboDeMicro2011-1\shoots\robito\robito.asm Wed Jun 29 18:33:34 2011
 
 
 EQU  SIGNATURE_000 0000001e
@@ -685,20 +685,23 @@ EQU  INT_VECTORS_SIZE 0000001a
 EQU  LCD_RS       00000001
 EQU  LCD_RW       00000002
 EQU  LCD_E        00000003
+EQU  Cero         00000030
+EQU  CeroO        00000048
 DEF  temp         r16
 DEF  argument     r17
 DEF  return       r18
 CSEG inicio       00000001
-CSEG LCD_init     00000033
-CSEG LCD_wait     000000c6
-CSEG LCD_putchar  00000057
-CSEG LCD_command  00000078
-CSEG fin          00000032
-CSEG LCD_delay    000000ca
-CSEG LCD_command8 00000046
-CSEG LCD_getchar  00000095
-CSEG LCD_getaddr  000000ac
-CSEG LCD_delay_externo 000000cb
-CSEG LCD_delay_interno 000000cc
-CSEG delay40      000000d1
-CSEG ciclo        000000d2
+CSEG LCD_init     0000003c
+CSEG LCD_putchar  00000060
+CSEG jm           0000000e
+CSEG LCD_wait     000000cf
+CSEG LCD_command  00000081
+CSEG fin          0000003b
+CSEG LCD_delay    000000d3
+CSEG LCD_command8 0000004f
+CSEG LCD_getchar  0000009e
+CSEG LCD_getaddr  000000b5
+CSEG LCD_delay_externo 000000d4
+CSEG LCD_delay_interno 000000d5
+CSEG delay40      000000da
+CSEG ciclo        000000db

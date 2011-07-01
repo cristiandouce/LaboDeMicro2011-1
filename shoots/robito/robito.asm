@@ -16,6 +16,9 @@
 .equ	LCD_RS	= 1
 .equ	LCD_RW	= 2
 .equ	LCD_E	= 3
+.equ		Cero		=	0x30		;* Cero en hexa
+.equ		CeroO	=	0x48		;* Cero en ascii
+
 
 .def	temp	= r16
 .def	argument= r17				;*argumento para subrutinas
@@ -41,6 +44,18 @@ inicio:
 ;**********************************************************
 ;*	Envio "Funciona!" al Display del LCD
 ;**********************************************************
+
+
+ldi		argument,0x02
+ldi		r30,Cero
+add		argument,r30
+rcall	LCD_putchar
+
+ldi	argument,0x03
+ldi		r30,CeroO
+add		argument,r30
+rcall LCD_putchar
+jm: rjmp jm
 	rcall	LCD_wait
 	ldi		argument, 'F'
 	rcall	LCD_putchar	
