@@ -102,8 +102,10 @@ RESET:
 MAIN:	rcall	SPI_Sinit
 		rjmp   idle	
 		
-idle:	sei
-		rjmp idle
+idle:
+		sei
+jm:
+		rjmp jm
 
 
 

@@ -55,21 +55,26 @@
 		sbi PORTB, pSS
 	.ENDMACRO
 
-	.MACRO	SendInstruction;*	Envio Instruccion
+	.MACRO	SendInstruction
+		;* Cargo la instruccion a enviar en 'tmt'
 		ldi tmt,@0
+
 		;Transmito instruccion y espero
 		SPI_START
 		rcall SPI_Mtransmit
 		rcall SPI_Wait
 		SPI_STOP
-		;Transmito NULL solo para leer lo pedido
-		SPI_START
+
+		;* Cargo NULL para no afectar Slave
 		ldi tmt,0
+
+		;* Transmito, espero y Recibo del buffer
+		SPI_START
 		rcall SPI_Mtransmit
 		rcall SPI_Wait
-
 		rcall SPI_Mreceive
 		SPI_STOP
+
 	.ENDMACRO
 	
 
@@ -81,14 +86,6 @@
 
 		rjmp RESET
 	
-
-;*****************************************************************
-;*	Defino los vectores de interrupcion
-;*****************************************************************
-	.org 0x011
-		rjmp SPI_STC ; SPI Transfer Complete Handler
-
-
 
 ;*****************************************************************
 ;*	Inicialización del Micro luego del RESET
@@ -112,37 +109,38 @@ MAIN:
 	    rcall	LCD_wait
 		;*Inicio el SPI como Master
 		rcall 	SPI_Minit
-
+		
+		;* Ordeno el inicio del sensor
 		rcall SlaveSensorInit
 	
+		;* Busco los datos de la lectura
 		rcall PutSensorData
 
 jm:		rjmp jm
-		
-		
-		SPI_START
-		rcall	SPI_Sendstring
-		SPI_STOP
-		rcall	LCD_Putstring
-loop:	rjmp	loop
+
 
 SlaveSensorInit:
-		;SPI_START
+		;*	Mando al slave para que inicie la lectura del sensor
 		SendInstruction 's'
-		;ldi rcv,'0'
-		;SPI_STOP
+
+		;*	Espero 1 segundo hasta que termine la lectura
 		rcall DELAY
 		ret
 
 PutSensorData:
+		;* cargo un contador para los 5 datos
 		ldi con,5
 start:
-
+		;* Mando instruccion de lectura
+		;* y levanto el dato
 		SendInstruction 'd'
-
+		
+		;* Cargo el dato en argumento para llevar al lcd
 		mov arg,rcv
 		rcall LCD_Putchar
 		rcall LCD_Wait
+
+		;* Decremento el contador
 		dec con
 		brne start
 		ret
@@ -165,34 +163,6 @@ SPI_Minit:
 		in tmp, SPDR
 		ret
 
-SPI_Sendstring:
-		ldi	con,0x00
-ssloop:	
-		ldi r30,0x00
-		ldi	r31,0x06
-		add r30,con
-		lpm	rtn,Z
-		out	spdr,rtn
-		in	dta,spdr
-		rcall SPI_Wait
-		ldi	r28,low(var)
-		ldi	r29,high(var)
-		add	r28,con
-		st	Y,dta
-		inc con
-		cpi	rtn,'g'
-		brne ssloop
-		ret
-
-
-
-
-
-;*****************************************************************
-;*	Operaciones de las Interrupciones
-;*****************************************************************
-SPI_STC:
-
 
 ;*****************************************************************
 ;*	Transmisión de 'tmt' por SPI al SLAVE
@@ -200,13 +170,15 @@ SPI_STC:
 SPI_Mtransmit:
 		out	SPDR, tmt
 		ret
+;*****************************************************************
+;*	Recepcion de 'rcv' por SPI del SLAVE
+;*****************************************************************
 SPI_Mreceive:
 		in	rcv, SPDR
 		ret
 
-
 ;*****************************************************************
-;*	Espera del fin de la recepción SPI
+;*	Espera del fin de la recepción SPI por Slave
 ;*****************************************************************
 SPI_Wait:
 		;*	Espera del fin de la recepción
@@ -216,45 +188,9 @@ SPI_Wait:
 		ret
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ;*****************************************************************
 ;*	Rutinas para trabajar con el LCD
 ;*****************************************************************
-
-LCD_Putstring:
-		ldi	con,0x00
-psloop:	
-		ldi r26,low(var)
-		ldi	r27,high(var)
-		add r26,con
-		ld	arg,X
-		mov tmt,arg
-		rcall LCD_Putchar
-		inc con
-		cpi	tmt,'f'
-		brne psloop
-		ret
-
-		
 
 LCD_init:
 	sbi	DDRC,LCD_RS
@@ -435,6 +371,10 @@ LCD_delay_inner:
 		brne LCD_delay_outer;sale dl ciclo si r2 es igual a cero
 		ret
 
+;*****************************************************************
+;*	Rutina de DELAY
+;*	Duracion de 1s aprox
+;*****************************************************************
 DELAY:
 	rcall LCD_delay
 	rcall LCD_delay
