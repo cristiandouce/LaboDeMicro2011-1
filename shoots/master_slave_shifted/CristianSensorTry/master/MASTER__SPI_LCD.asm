@@ -57,22 +57,21 @@
 
 	.MACRO	SendInstruction;*	Envio Instruccion
 		ldi tmt,@0
+		;Transmito instruccion y espero
+		SPI_START
 		rcall SPI_Mtransmit
 		rcall SPI_Wait
-		nop
-		nop
-		nop
-		nop
-		nop
-		nop
-		nop
-		nop
-		in rcv,SPDR
+		SPI_STOP
+		;Transmito NULL solo para leer lo pedido
+		SPI_START
+		ldi tmt,0
+		rcall SPI_Mtransmit
+		rcall SPI_Wait
+
+		rcall SPI_Mreceive
+		SPI_STOP
 	.ENDMACRO
 	
-	.org 0x0300 ;defino una palabra para mandar
-		.cseg
-		string: .db "abcdefg"
 
 	.dseg
 		var:	.byte	6
@@ -113,8 +112,9 @@ MAIN:
 	    rcall	LCD_wait
 		;*Inicio el SPI como Master
 		rcall 	SPI_Minit
-		
+
 		rcall SlaveSensorInit
+	
 		rcall PutSensorData
 
 jm:		rjmp jm
@@ -127,18 +127,19 @@ jm:		rjmp jm
 loop:	rjmp	loop
 
 SlaveSensorInit:
-		SPI_START
+		;SPI_START
 		SendInstruction 's'
-		SPI_STOP
+		;ldi rcv,'0'
+		;SPI_STOP
 		rcall DELAY
 		ret
 
 PutSensorData:
 		ldi con,5
 start:
-		SPI_START
+
 		SendInstruction 'd'
-		SPI_STOP
+
 		mov arg,rcv
 		rcall LCD_Putchar
 		rcall LCD_Wait
@@ -199,7 +200,9 @@ SPI_STC:
 SPI_Mtransmit:
 		out	SPDR, tmt
 		ret
-
+SPI_Mreceive:
+		in	rcv, SPDR
+		ret
 
 
 ;*****************************************************************
@@ -254,9 +257,9 @@ psloop:
 		
 
 LCD_init:
-	ldi		tmp, 0b00001100		;*las lineas de control son salidas y el resto entradas
-	out		DDRD, tmp
-	sbi		DDRC,1
+	sbi	DDRC,LCD_RS
+	sbi DDRD,LCD_RW
+	sbi	DDRD,LCD_E
 	rcall	LCD_delay				;*esperamos que inicie el lcd
 	
 	ldi		arg, 0x20			;*Le decimos al lcd que queremos usarlo en modo 4-bit

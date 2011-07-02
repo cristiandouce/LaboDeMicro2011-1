@@ -50,10 +50,12 @@
 /******************************************************************************/
 ;Defino las variables
  .dseg
+ .org 0x200
  var:	.byte	6
 
-	.org 0x0000
+
 	.cseg
+		.org 0x0000
 	rjmp RESET
 
 ;*****************************************************************
@@ -71,6 +73,18 @@ RESET:
 		out	SPL, tmp
 		ldi	tmp, high(RAMEND)
 		out	SPH, tmp
+		ldi	r26,low(var);x apunta a var
+	    ldi	r27,high(var)
+		ldi tmp,'a'
+		st X+,tmp
+		ldi tmp,'h'
+		st X+,tmp
+		ldi tmp,'o'
+		st X+,tmp
+		ldi tmp,'r'
+		st X+,tmp
+		ldi tmp,'a'
+		st X+,tmp
 		ldi	r26,low(var);x apunta a var
 	    ldi	r27,high(var)
 		cbi DDRD, 0;configuro RX como entrada
@@ -124,14 +138,15 @@ return_interrupt:
 SENSOR_Init1:
 		ldi tmp,'w'
 		out	SPDR,tmp
-		rcall sensor
+
+		;rcall sensor
 		ldi	r26,low(var);vuelvo a hacer q apunte al comienzo
 	    ldi	r27,high(var)
 		rjmp	return_interrupt
 
 SENSOR_Data:
-		ld r17,X+
-		out SPDR,r17
+		ld tmp,X+
+		out SPDR,tmp
 		rjmp	return_interrupt	
 		
 sensor:
