@@ -5,3 +5,5 @@
 *.map
 *.bat
 *.hex
+*.dbk
+*.pwi
