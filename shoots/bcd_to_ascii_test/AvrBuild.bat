@@ -1,2 +1,0 @@
-@ECHO OFF
-"C:\Archivos de programa\Atmel\AVR Tools\AvrAssembler2\avrasm2.exe" -S "C:\dev\repos\LaboDeMicro2011-1\shoots\robito\labels.tmp" -fI -W+ie -o "C:\dev\repos\LaboDeMicro2011-1\shoots\robito\robito.hex" -d "C:\dev\repos\LaboDeMicro2011-1\shoots\robito\robito.obj" -e "C:\dev\repos\LaboDeMicro2011-1\shoots\robito\robito.eep" -m "C:\dev\repos\LaboDeMicro2011-1\shoots\robito\robito.map" "C:\dev\repos\LaboDeMicro2011-1\shoots\robito\robito.asm"
