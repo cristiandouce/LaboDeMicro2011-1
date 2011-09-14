@@ -1,6 +1,6 @@
 .include "m88def.inc"
 
-.;*Defino constantes
+;*Defino constantes
 ;-Operativos
 	;Menu
 	.equ	op1			=	0x00		;opcion1: lectura en menu principal; 'Si' en exportar y calibracion 2
@@ -885,8 +885,8 @@ lcd_command8:
 		;so that no control line bits are overwritten
 		or	tmp, arg		;then set the data bits (from the argument) in the
 		;Port value
-		/*en argument tengo el argumento con el nibble d las variables d control en cero*/
-		/*en tmp tngo los valores dl puerto d, con la parte d datos borrada*/
+		;*en argument tengo el argumento con el nibble d las variables d control en cero
+		;*en tmp tngo los valores dl puerto d, con la parte d datos borrada
 		out	PortD, tmp		;and write the port value.
 		sbi	PortD, LCD_E		;now strobe E
 		nop
