@@ -717,7 +717,7 @@ FN_Backtomain:
 FN_Cal:
 		ldi		con,0x00
 		ubicar	op4,maskOP
-		ubicar	menu3,maskmn
+		ubicar	menu3,maskMN
 		rjmp	display_Cal1confirm
 FN_Lmp:
 		sbrs	fla,flagLmp
