@@ -2,18 +2,18 @@
 		 rjmp RESET ; Reset Handler
 
 
-RESET:	ldi		r16,high(RAMEND)	; Main program start
-		out 	SPH,r16 			; Set Stack Pointer to top of RAM
-		ldi 	r16,low(RAMEND)
-		out 	SPL,r16
-		ldi		r18,0x00			; mis flags
-		ldi		r16,0x00			; 8 zeros in universal register
-		out		DDRD,r16			; to data direction register
-	 	ldi		r16,0xFF 			; 8 Ones into the universal register
-	 	out		PORTD,r16 			; and to port D (these are the pull-ups now!)
-		out		DDRB,r16
-		ldi		r16,0b00000011			; and to the data direction register
-		out		PORTB,r16 			; and to the outputregisters.
+RESET:	ldi		tmp,high(RAMEND)	; Main program start
+		out 	SPH,tmp 			; Set Stack Pointer to top of RAM
+		ldi 	tmp,low(RAMEND)
+		out 	SPL,tmp
+		ldi		fla,0x00			; mis flags
+		ldi		tmp,0b00000000			; 8 zeros in universal register
+		out		DDRC,tmp			; to data direction register
+	 	ldi		tmp,0xFF 			; 8 Ones into the universal register
+	 	out		PORTD,tmp 			; and to port D (these are the pull-ups now!)
+		out		DDRB,tmp
+		ldi		tmp,0b00000011		; and to the data direction register
+		out		PORTB,tmp 			; and to the outputregisters.
 loop:	in 		r17,PIND
 		sbrs	r17,0 				; Jump if bit 0 in port D input is one
 		rcall	setmov				; Relative call to the subroutine named Lampe0
